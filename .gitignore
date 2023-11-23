@@ -4,15 +4,5 @@ htmlcov/
 instance/
 tests
 studio.code-workspace
-rma/__pycache__/__init__.cpython-311.pyc
-rma/__pycache__/auth.cpython-311.pyc
-rma/__pycache__/customer.cpython-311.pyc
-rma/__pycache__/db.cpython-311.pyc
-rma/__pycache__/json.cpython-311.pyc
-rma/__pycache__/overview.cpython-311.pyc
-rma/__pycache__/product.cpython-311.pyc
-rma/__pycache__/rma.cpython-311.pyc
-rma/__pycache__/scan_in_bundle.cpython-311.pyc
-rma/__pycache__/scan_out_bundle.cpython-311.pyc
-rma/__pycache__/search.cpython-311.pyc
-rma/__pycache__/shipment.cpython-311.pyc
+rma/__pycache__/
+.venv
