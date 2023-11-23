@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h3>{% block title %}編輯RMA紀錄{% endblock  %}</h3>
+    <hr>
+{% endblock  %}
+
+{% block content %}
+<form method="post" class="container">
+  <!-- Hidden field to store rma_id -->
+  <input type="hidden" name="rma_id" value="{{ rma.rma_id }}">
+
+  <div class="form-group">
+    <label for="return_reason" class="form-label">退貨原因</label>
+    <input type="text" name="return_reason" id="return_reason" value="{{ rma.return_reason }}"
+      class="form-control">
+  </div>  
+  <div class="form-group">
+    <label for="issue_category" class="form-label">問題分類:</label>
+    <select name="issue_category" id="issue_category" class="form-control">
+      <option value="" disabled hidden>請選擇問題分類</option>
+      <option value="硬體相關" {% if rma.issue_category == '硬體相關' %}selected{% endif %}>硬體相關</option>
+      <option value="外觀問題" {% if rma.issue_category == '外觀問題' %}selected{% endif %}>外觀問題</option>
+      <option value="軟體相關" {% if rma.issue_category == '軟體相關' %}selected{% endif %}>軟體相關</option>
+      <option value="其他問題" {% if rma.issue_category == '其他問題' %}selected{% endif %}>其他問題</option>
+    </select>
+  </div>
+  
+  <div class="form-group">
+    <label for="handling_method" class="form-label">處理方式:</label>
+    <select name="handling_method" id="handling_method" class="form-control">
+      <option value="" {% if rma.handling_method is none %}selected{% endif %}><請選擇></option> <!-- 新增的空值選項 -->
+      <option value="新品更換" {% if rma.handling_method == '新品更換' %}selected{% endif %}>新品更換</option>
+      <option value="良品更換" {% if rma.handling_method == '良品更換' %}selected{% endif %}>良品更換</option>
+      <option value="維修" {% if rma.handling_method == '維修' %}selected{% endif %}>維修</option>
+      <option value="其他方式" {% if rma.handling_method == '其他方式' %}selected{% endif %}>其他方式</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="status" class="form-label">案件狀態:</label>
+    <select name="status" id="status" class="form-control">
+      <option value="" disabled hidden>請選擇案件狀態</option>
+      <option value="未處理" {% if rma.status == '未處理' %}selected{% endif %}>未處理</option>
+      <option value="處理中" {% if rma.status == '處理中' %}selected{% endif %}>處理中</option>
+      <option value="已完成" {% if rma.status == '已完成' %}selected{% endif %}>已完成</option>
+      <option value="無法處理" {% if rma.status == '無法處理' %}selected{% endif %}>無法處理</option>
+    </select>
+  </div>
+
+
+  <!-- Submit Button -->
+  <button type="submit" class="btn btn-primary">更新</button>
+</form>
+
+<hr>
+
+<!-- Form for Delete Action -->
+<form method="POST" action="{{ url_for('overview.rma.rma_delete', rma_id=rma.rma_id) }}" class="container">
+  <!-- Hidden field to store rma_id -->
+  <input type="hidden" name="rma_id" value="{{ rma.rma_id }}">
+  
+  <!-- Submit Button -->
+  <button type="submit" class="btn btn-danger" onclick="return confirm('確定要刪除嗎?')">刪除</button>
+</form>
+
+
+{% endblock %}

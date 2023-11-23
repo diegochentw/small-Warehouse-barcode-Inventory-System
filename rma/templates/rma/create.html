@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h3>{% block title %} 建立RMA紀錄 {% endblock  %}</h3>
+    <hr>
+
+{% endblock  %}
+
+{% block content %}
+
+
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <form action="{{ url_for('overview.rma.rma_create') }}" method="post" >
+                <div class="row g-3">
+                    <!-- Left column -->
+                    <div class="col-md-5 mx-auto">
+                        <div class="mb-3">
+                            <label for="customer_id" class="form-label">客供商/消費者:</label>
+                            <select name="customer_id" id="customer_id" class="form-select" required>
+                                <option value="" disabled selected>選擇客戶</option>
+                                {% for customer in customers %}
+                                    <option value="{{ customer.customer_id }}">{{ customer.customer_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="product_id" class="form-label">產品序號:</label>
+                            <input type="text" name="product_sn" id="product_sn" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <!-- Right column -->
+                    <div class="col-md-5 mx-auto">
+                        <div class="mb-3">
+                            <label for="issueCategory" class="form-label">問題分類:</label>
+                            <select name="issue_category" id="issueCategory" class="form-control" required>
+                                <option value="" disabled selected hidden><請選擇></option> <!-- 預設為空並加入說明 -->
+                                <option value="硬體相關">硬體相關</option>
+                                <option value="外觀問題">外觀問題</option>
+                                <option value="軟體相關">軟體相關</option>
+                                <option value="其他問題">其他問題</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="handlingMethod" class="form-label">處理方式:</label>
+                            <select name="handling_method" id="handlingMethod" class="form-control">
+                                <option value="" disabled selected hidden><請選擇></option> <!-- 預設為空並加入說明 -->
+                                <option value="新品更換">新品更換</option>
+                                <option value="良品更換">良品更換</option>
+                                <option value="維修">維修</option>
+                                <option value="其他方式">其他方式</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="status" class="form-label">案件狀態:</label>
+                            <select name="status" id="status" class="form-control">
+                                <option value="未處理">未處理</option>
+                                <option value="處理中">處理中</option>
+                                <option value="已處理">已完成</option>
+                                <option value="無法處理">無法處理</option>
+                            </select>
+                        </div>                        
+                            <div class="mb-3">
+                                <label for="return_reason" class="form-label">退貨原因/備註:</label>
+                                <textarea name="return_reason" id="return_reason" rows="4" class="form-control"></textarea>
+                            </div>                       
+                    </div>
+
+                    
+                    <div class="col-12 mt-3 mx-auto text-center">
+                        <button type="submit" class="btn btn-primary">送出 RMA</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+    <!-- 這將顯示任何錯誤或消息 -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <!-- 請在這裡加入您的JavaScript或其他頁腳元素 -->
+
+    {% endblock %}    

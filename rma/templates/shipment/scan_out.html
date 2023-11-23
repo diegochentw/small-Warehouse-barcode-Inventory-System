@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h3>{% block title %} 掃碼紀錄 - 出倉 {% endblock  %}</h3>
+    <hr>
+    {% if g.user %}
+    <!-- <a class="btn btn-primary me-2 " href="{{ url_for('overview.scan_out.scan_out_single') }}">單筆掃碼出倉</a>       -->
+    <a class="btn btn-primary me-2 " href="{{ url_for('overview.scan_out.scan_out_batch') }}">掃碼出倉</a>  
+    <a class="btn btn-primary me-2 " href="{{ url_for('overview.scan_out.scan_out_range') }}">序號範圍出倉</a>            
+    <hr>
+    {% endif %}
+{% endblock  %}
+
+{% block content %}
+  <div class="table-responsive">
+    <table id="customer" class="table table-striped nowrap">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>產品序號</th>          
+          <th>掃碼分類</th>          
+          <th>產品分類</th>                      
+          <th>客戶</th>
+          <th>產品名</th>                    
+          <th>註記</th>
+          <th>掃碼日期</th>      
+        </tr>
+      </thead>
+    </table>
+  </div>
+
+  <script>
+    $(document).ready(function() {
+        $('#customer').DataTable({
+          language: {
+              url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/zh-HANT.json',
+            },          
+            "ajax": {
+                "url": "/json/shipment_out",  // 外部 URL
+                "dataSrc": ""
+            },
+            "columns": [
+                { "data": "shipment_id" },
+                { "data": "product_sn" },                
+                { "data": "type" },
+                { "data": "category_name" },                
+                { "data": "customer_name" },                
+                { "data": "product_name" },                
+                { "data": "note" },
+                { 
+            "data": "created_date",
+            "render": function(data, type, row) {
+              if(type === 'display' || type === 'filter'){
+                var date = new Date(data);
+                date.setHours(date.getHours() + 16);
+                return date.toISOString().replace('T', ' ').substring(0, 19);
+              }
+              return data;
+            }
+          },
+
+            ],
+            "order": [[7, "desc"]],
+            "columnDefs": [
+                {
+                    "targets": 0, // 第三列，從 0 開始計數
+                    "render": function(data, type, row, meta) {
+                        // 生成超連結，假設 rma_id 是用來標識客戶的唯一 ID
+                        var link = '<a href="/shipment/scan_out/shipment_update/' + row.shipment_id + '">' + data + '</a>';
+                        return link;
+                    }
+                }
+            ]
+        });
+    });
+</script>
+
+{% endblock %}
+

@@ -1,0 +1,19 @@
+[project]
+name = "rma"
+version = "alpha 1.1"
+description = "Very simple stock barcode scan in and scan out system"
+dependencies = [
+    "flask",
+
+]
+
+[build-system]
+requires = ["flit_core<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["rma"]

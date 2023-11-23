@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h3>{% block title %}建檔入倉{% endblock %}</h3>
+<hr>
+{% endblock %}
+
+{% block content %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <form method="post">
+                <div class="row g-3">
+                    <!-- Left column -->
+                    <div class="col-md-5 mx-auto">
+                        <!-- 產品建立部分 -->
+                        <h2>產品資訊</h2>
+                        <label for="category_id" class="form-label">類別ID：</label>
+                        <select name="category_id">
+                            {% for category in categories %}
+                            <option value="{{ category['category_id'] }}">{{ category['category_name'] }}</option>
+                            {% endfor %}
+                        </select><br>
+
+                        <label for="product_name" class="form-label">產品名稱：</label>
+                        <input type="text" name="product_name" class="form-control product-sn-field" ><br>
+
+                        <label for="model_name" class="form-label">型號名稱：</label>
+                        <input type="text" name="model_name" class="form-control product-sn-field" ><br>
+
+                        <label for="erp_no" class="form-label">ERP編號：</label>
+                        <input type="text" name="erp_no" class="form-control product-sn-field" ><br>
+
+                        <label for="ean_code" class="form-label">EAN碼：</label>
+                        <input type="text" name="ean_code" class="form-control product-sn-field" ><br>
+
+                        <label for="upc_code" class="form-label">UPC碼：</label>
+                        <input type="text" name="upc_code" class="form-control product-sn-field" ><br>
+
+                        <label for="manufacturing_date" class="form-label">製造日期：</label>
+                        <input type="date" name="manufacturing_date" class="form-control product-sn-field" ><br>
+                    </div>
+
+                    <!-- Right column -->
+                    <div class="col-md-5 mx-auto">
+                        <!-- 進倉掃碼部分 -->
+                        <h2>進倉掃碼</h2>
+
+                        <label for="customer_id" class="form-label">客戶ID：</label>
+                        <select name="customer_id">
+                            {% for customer in customers %}
+                            <option value="{{ customer['customer_id'] }}">{{ customer['customer_name'] }}</option>
+                            {% endfor %}
+                        </select><br>
+
+                        <label for="product_sn" class="form-label">產品序號：</label>
+                        <input type="text" name="product_sn" class="form-control product-sn-field" required><br>
+
+                        <label for="note" class="form-label">備註：</label>
+                        <textarea name="note"  rows="4" class="form-control"></textarea><br>
+                    </div>
+
+                    <div class="col-12 mx-auto text-center">
+                        <button type="submit" class="btn btn-primary">存檔</button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

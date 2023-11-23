@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h3>{% block title %}產品序號綁定(序號範圍) {% endblock %}</h3>
+  <hr>
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <form method="post">
+                <div class="row g-3">
+                    <!-- Left column -->
+                    <div class="col-md-5 mx-auto">
+                        <div class="mb-3">
+                            <label for="sku_id">選擇SKU</label>
+                            <select name="sku_id" id="sku_id" class="form-control">
+                              {% for sku in skus %}
+                                <option value="{{ sku.sku_id }}">{{ sku.product_name }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                          <div class="mb-3">                          
+                            <label for="erp_no" class="form-label">ERP編號</label>
+                            <input type="text" name="erp_no" id="erp_no" value="{{ request.form['erp_no'] }}"
+                                class="form-control" placeholder="ex: AR00810400">
+                        </div>
+                        <div class="mb-3">
+                            <label for="manufacturing_date" class="form-label">出廠日期</label>
+                            <input type="date" name="manufacturing_date" id="manufacturing_date" value="{{ request.form['manufacturing_date'] }}"
+                                class="form-control" placeholder="ex: 2022-01-01">
+                        </div>                        
+                    </div>
+
+                    <!-- Right column -->
+                    <div class="col-md-5 mx-auto">
+                        
+                        <div class="mb-3">
+                            <label for="product_sn_prefix" class="form-label">產品序號前綴</label>
+                            <input type="text" name="product_sn_prefix" id="product_sn_prefix" class="form-control"
+                                required>
+                            <div id="product_sn_prefixHelpBlock" class="form-text">
+                                ex: 序號 230101500001 ~ 230101500999，前綴 = 23010150
+                            </div>
+                        </div>
+
+                        <div class="row g-3 align-items-center">
+                            <div class="col-auto">
+                                <label for="sn_digit_length" class="form-label">序號位數</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="number" name="sn_digit_length" id="sn_digit_length" class="form-control"
+                                    required>
+                            </div>
+                            <div class="col-auto">
+                                <span id="passwordHelpInline" class="form-text">
+                                    請留意位數長度
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="product_sn_range_start" class="form-label">數值開頭</label>
+                            <input type="number" name="product_sn_range_start" id="product_sn_range_start"
+                                class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="product_sn_range_end" class="form-label">數值結尾</label>
+                            <input type="number" name="product_sn_range_end" id="product_sn_range_end"
+                                class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-3 mx-auto text-center">
+                        <button type="submit" class="btn btn-primary">存檔</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

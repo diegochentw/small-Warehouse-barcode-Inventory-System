@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h3>{% block title %}掃碼入倉{% endblock %}</h3>
+  <hr>
+{% endblock %}
+
+
+{% block content %}
+<div class="container mt-3">
+  <div class="row">
+    <!-- Left Section: Customer Selection and Notes -->
+    <div class="mx-auto col-10 mt-4">
+      <form method="post" class="container" action="{{ url_for('overview.scan_in.scan_in_single')}}">
+        <div class="mb-3">
+          <label for="customer_id" class="form-label">客戶(客供商/消費者)</label>
+          <select name="customer_id" id="customer_id" class="form-select" required>
+            <option value="" disabled selected>選擇客戶</option>
+            {% for customer in customers %}
+            <option value="{{ customer.customer_id }}">{{ customer.customer_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="product_sn" class="form-label">產品序號</label>
+          <div id="productFields" class="input-group">
+            <input type="text" name="product_sn" id="product_sn" class="form-control" required>
+            <button type="button" class="btn btn-secondary" onclick="getProductInfo()">查詢</button>
+          </div>
+        </div>
+        <!-- 顯示產品基本資訊 -->
+        <div id="productInfo"></div>
+
+        <div class="mb-3">
+          <label for="note" class="form-label">備註</label>
+          <input type="text" name="note" id="note" value="{{ request.form['note'] }}" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-primary">存檔</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+  function getProductInfo() {
+    var productSnInput = document.getElementById("product_sn");
+    var productInfoContainer = document.getElementById("productInfo");
+    var productSn = productSnInput.value;
+    
+    // 發送GET請求以獲取JSON數據
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/json/product", true);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        var productsData = JSON.parse(xhr.responseText);
+        var foundProduct = productsData.find(function(product) {
+          return product.product_sn === productSn;
+        });
+
+        if (foundProduct) {
+          productInfoContainer.innerHTML = `
+            <p>產品名稱: ${foundProduct.product_name}</p>
+            <p>型號: ${foundProduct.model_name}</p>
+            <p>ERP 編號: ${foundProduct.erp_no}</p>
+          `;
+        } else {
+          productInfoContainer.innerHTML = "<p>找不到匹配的產品信息</p>";
+        }
+      }
+    };
+    xhr.send();
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h3>{% block title %}批次掃碼出倉{% endblock %}</h3>
+<hr>
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.7.0/dist/css/bootstrap.min.css">
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    var scannedSnSet = new Set(); // 建立一個集合來儲存掃描過的序號
+
+    function getProductInfo(inputField) {
+        var productSn = inputField.val();
+
+        // 檢查序號是否已掃描
+        if (scannedSnSet.has(productSn)) {
+            alert("產品序號 " + productSn + " 已被掃描，請勿重複掃描");
+            inputField.val(''); // 清除輸入欄位
+            inputField.siblings('.product-info').empty(); // 清除產品資訊
+            return;
+        }
+
+        scannedSnSet.add(productSn); // 將新掃描的序號添加到集合中
+
+        var productInfoContainer = inputField.siblings('.product-info'); // 取得序號欄位旁邊的產品資訊容器
+
+        $.get("/json/product", function(data) {
+            var foundProduct = data.find(function(product) {
+                return product.product_sn === productSn;
+            });
+
+            if (foundProduct) {
+                productInfoContainer.html(`
+                    產品名稱: ${foundProduct.product_name} 型號: ${foundProduct.model_name} ERP 編號: ${foundProduct.erp_no}
+                `);
+            } else {
+                productInfoContainer.html("<p>找不到匹配的產品信息</p>");
+            }
+        });
+    }
+    
+        function addProductSnInput() { // 複製第一個產品序號輸入欄位
+            var newProductSnInput = $(".product-sn-input:first").clone();
+
+            // 清除新複製的輸入欄位的值和相鄰的產品資訊
+            newProductSnInput.find("input[type='text']").val('');  
+            newProductSnInput.find('.product-info').empty();   
+            newProductSnInput.appendTo("#product-sn-container"); // 將新的輸入欄位添加到產品序號容器中
+            newProductSnInput.find("input[type='text']").focus(); // Focus on the new input field
+        }
+
+        $("#add-product-sn").click(addProductSnInput);         // 點擊新增產品序號按鈕時調用函數
+    
+        // 監聽產品序號輸入欄位的 keydown 和 change 事件
+        $(document).on('keydown', '.product-sn-input input[type="text"]', function(e) {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                e.preventDefault(); // Prevent default behavior of Enter key
+                addProductSnInput();
+            }
+        }).on('change', '.product-sn-input input[type="text"]', function() {
+            getProductInfo($(this));
+        });
+    });
+
+</script>
+<div class="container mt-3">
+    <div class="row">
+      <!-- Left Section: Customer Selection and Notes -->
+      <div class="mx-auto col-10 mt-4">
+    <form method="post" class="container" action="{{ url_for('overview.scan_out.scan_out_batch')}}">
+        <div class="mb-3">
+            <label for="customer_id" class="form-label">客戶(客供商/消費者)</label>
+            <select name="customer_id" id="customer_id" class="form-select" required>
+                <option value="" disabled selected>選擇客戶</option>
+                {% for customer in customers %}
+                <option value="{{ customer.customer_id }}">{{ customer.customer_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3"> <!-- 產品序號輸入框容器 -->
+            <div id="product-sn-container">
+                <!-- 初始的產品序號輸入欄位 -->
+                <div class="product-sn-input">
+                    <label for="product_sn" class="form-label">產品序號</label>
+                    <input type="text" name="product_sn[]" class="form-control product-sn-field">
+                    <!-- 顯示產品基本資訊 -->
+                    <div class="product-info"></div>
+                </div>
+            </div>
+
+            <!-- 新增產品序號按鈕 -->
+            <button type="button" id="add-product-sn" class="btn btn-secondary mt-2">新增產品序號</button>
+        </div>
+
+        <div class="mb-3">
+            <label for="note" class="form-label">備註</label>
+            <input type="text" name="note" id="note" value="{{ request.form['note'] }}" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-primary">存檔</button>
+    </form>
+</div>
+</div>
+</div>
+{% endblock %}

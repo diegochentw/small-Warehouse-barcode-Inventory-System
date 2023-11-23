@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h3>序號：{{ product_sn}}    {% if years is not none and remaining_days is not none %}
+        產品出廠迄今：{{ years}}年 {{ remaining_days }}天
+        {% else %}
+        <p>產品出廠迄今：(無資料)</p>
+        {% endif %}</h3>
+    <hr>
+    <!-- 產品出廠迄今：{{ manufacturing_duration.days }} 天 -->
+
+    
+    <!-- Create a Bootstrap table -->
+    <div class="container">
+        <div class="row">
+            <div class="mx-auto col-12 mt-4">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">類型</th> <!-- Column for Type -->
+                            <th scope="col">日期</th> <!-- Column for Date -->                                                        
+                            <th scope="col">編號</th> <!-- Column for Type -->
+                            <th scope="col">內容</th> <!-- Column for Content -->
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in records %} <!-- Loop through each record in the records list -->
+                        <tr>
+                            <td>
+                                {% if record.type == 'Product' %} <!-- Check if the record type is 'Product' -->
+                                建檔
+                                {% elif record.type == 'RMA' %} <!-- Check if the record type is 'RMA' -->
+                                RMA
+                                {% elif record.type == 'Shipment' %} <!-- Check if the record type is 'Shipment' -->
+                                {{ record.details.type }}
+                                {% endif %}
+                            </td>
+                            <td>{{ record.date }}</td> <!-- Date Column -->                                                        
+                            <td>
+                                {% if record.type == 'Product' %} <!-- Check if the record type is 'Product' -->
+                                #{{ record.details.product_id }}
+                                {% elif record.type == 'RMA' %} <!-- Check if the record type is 'RMA' -->
+                                #{{ record.details.rma_id }}
+                                {% elif record.type == 'Shipment' %} <!-- Check if the record type is 'Shipment' -->
+                                #{{ record.details.shipment_id }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if record.type == 'Product' %} <!-- Populate Content Column with Product details -->
+                                名稱:{{ record.details.product_name }}
+                                {% elif record.type == 'RMA' %} <!-- Populate Content Column with RMA details -->
+                                退貨理由: {{ record.details.return_reason }}
+                                {% elif record.type == 'Shipment' %} <!-- Populate Content Column with Shipment details -->
+                                {{ record.details.type }}給客戶 - {{ record.details.customer_name }} - 備註: {{ record.details.note }}
+                                {% endif %}
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

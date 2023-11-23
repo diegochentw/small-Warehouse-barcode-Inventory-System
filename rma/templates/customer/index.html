@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h3>{% block title %} 客戶/供應商 {% endblock %}</h3>
+    <hr>
+    {% if g.user %}
+    <a class="btn btn-primary me-2 " href="{{ url_for('overview.customer.customer_create') }}">新增客戶資料</a>
+    <hr>
+    {% endif %}
+
+{% endblock  %}
+
+{% block content %}
+  <div class="table-responsive">
+    <table id="customer" class="table table-striped nowrap">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>客戶名稱</th>          
+          <th>類型</th>
+          <th>聯絡人</th>
+          <th>電話</th>
+          <th>Email</th>
+          <th>地址</th>                   
+        </tr>
+      </thead>
+    </table>
+  </div>
+
+  <script>
+
+function format(d) {
+    // `d` is the original data object for the row
+    return (
+        '<dl>' +
+        '<dt>客戶注意事項:</dt>' +
+        '<dd><pre>' + d.notes + '</pre></dd>' +
+        '</dl>'
+    );
+}
+
+
+var table = $('#customer').DataTable({
+  language: {
+              url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/zh-HANT.json',
+            },  
+    "ajax": {
+        "url": "/json/customer",  // External URL
+        "dataSrc": ""
+    },
+    "columns": [
+        { "data": "customer_id" },
+        { "data": "customer_name" },
+        { "data": "type" },
+        { "data": "contact" },                
+        { "data": "phone" },
+        { "data": "email" },
+        { "data": "address" },
+
+    ],
+    "columnDefs": [
+    {
+            "targets": 0, // Second column, starting from 0
+            "render": function(data, type, row, meta) {
+                // Generate hyperlink
+                var link = '<a href="/customers/customer_update/' + row.customer_id + '">' + data + '</a>';
+                return link;
+            }
+        }]  
+});
+
+$('#customer').on('click', 'td', function () {
+    var tr = $(this).closest('tr');
+    var row = table.row(tr);
+    if (row.child.isShown()) {
+        // This row is already open - close it
+        row.child.hide();
+    }
+    else {
+        row.child(format(row.data())).show();
+    }
+  });
+</script>
+
+{% endblock %}
+

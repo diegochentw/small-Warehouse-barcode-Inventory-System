@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h3>{% block title %}編輯進貨資料{% endblock  %}</h3>
+    <hr>
+{% endblock  %}
+
+{% block content %}
+
+
+
+<div class="col-12 mt-3 mx-auto text-center">
+<!-- Form for Delete Action -->
+<form method="POST" action="{{ url_for('overview.scan_in.shipment_delete', shipment_id=shipment.shipment_id) }}" class="container">
+  <!-- Hidden field to store shipment_id -->
+  <input type="hidden" name="shipment_id" value="{{ shipment.shipment_id }}">
+  
+  <!-- Submit Button -->
+  <button type="submit" class="btn btn-danger" onclick="return confirm('確定要刪除嗎?')">刪除</button>
+</form>
+</div>
+
+{% endblock %}

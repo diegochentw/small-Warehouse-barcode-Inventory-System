@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h3>{% block title %}編輯客戶{% endblock  %}</h3>
+    <hr>
+{% endblock  %}
+
+{% block content %}
+
+<div class="container mt-5">
+  <div class="card">
+      <div class="card-body">
+          <form method="post">
+              <div class="row g-3">
+                  <!-- Left column -->
+                  <div class="col-md-5 mx-auto">
+                    <form method="post" class="container">
+                      <!-- Hidden field to store customer_id -->
+                      <input type="hidden" name="customer_id" value="{{ customer.customer_id }}">
+                    
+                      <!-- Form field for Customer Name -->
+                      <div class="mb-1">
+                        <label for="customer_name" class="form-label">客戶名稱</label>
+                        <input type="text" name="customer_name" id="customer_name" value="{{ customer.customer_name }}"
+                          class="form-control" required placeholder="請輸入客戶名稱">
+                      </div>
+
+                      <!-- Form field for Contact -->
+                      <div class="mb-1">
+                        <label for="contact" class="form-label">聯絡人</label>
+                        <input type="text" name="contact" id="contact" value="{{ customer.contact }}"
+                          class="form-control" placeholder="請輸入聯絡人">
+                      </div>
+
+                      <!-- Form field for Phone -->
+                      <div class="mb-1">
+                        <label for="phone" class="form-label">電話</label>
+                        <input type="text" name="phone" id="phone" value="{{ customer.phone }}"
+                          class="form-control" placeholder="請輸入電話">
+                      </div>
+
+                      <!-- Form field for Email -->
+                      <div class="mb-1">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="text" name="email" id="email" value="{{ customer.email }}"
+                          class="form-control" placeholder="請輸入Email">
+                      </div>
+
+                      <!-- Form field for Address -->
+                      <div class="mb-1">
+                        <label for="address" class="form-label">地址</label>
+                        <input type="text" name="address" id="address" value="{{ customer.address }}"
+                          class="form-control" placeholder="請輸入地址">
+                      </div>
+                    </div>    
+                  <!-- Right column -->
+                  <div class="col-md-5 mx-auto">
+                      <!-- Form field for Customer Type -->
+                      <div class="mb-1">
+                        <label for="type" class="form-label">客戶類型</label>
+                        <!-- <select name="type" id="type" class="form-control" required>
+                          <option value="">請選擇客戶類型</option>
+                          <option value="供應商">供應商 (進倉=工廠進貨、出倉=退回工廠)</option>
+                          <option value="代理商">代理商 (進倉=退貨)</option>
+                          <option value="零售商">零售商 (進倉=RMA)</option>
+                          <option value="電商">電商 (進倉=退貨、出倉=寄倉)</option>
+                          <option value="RMA維修客人">RMA維修客人</option>
+                        </select> -->
+                        <select name="type" id="type" class="form-control" required>
+                          <option value="" {% if not customer.type %}selected{% endif %}>請選擇客戶類型</option>
+                          <option value="供應商" {% if customer.type == '供應商' %}selected{% endif %}>供應商 (進倉=工廠進貨、出倉=退回工廠)</option>
+                          <option value="代理商" {% if customer.type == '代理商' %}selected{% endif %}>代理商 (進倉=退貨)</option>
+                          <option value="零售商" {% if customer.type == '零售商' %}selected{% endif %}>零售商 (進倉=RMA)</option>
+                          <option value="電商" {% if customer.type == '電商' %}selected{% endif %}>電商 (進倉=退貨、出倉=寄倉)</option>
+                          <option value="RMA維修客人" {% if customer.type == 'RMA維修客人' %}selected{% endif %}>RMA維修客人</option>
+                      </select>
+                      
+                      </div>
+
+
+
+                      <!-- Form field for Notes -->
+                      <div class="mb-1">
+                        <label for="notes" class="form-label">註記</label>
+                        <input type="text" name="notes" id="notes" value="{{ customer.notes }}"
+                          class="form-control" placeholder="請輸入註記">
+                      </div>
+                  </div>
+
+
+                  <div class="col-12 mt-3 mx-auto text-center">
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary">更新</button>
+                  </div>
+                  
+              </div>
+          </form>
+      </div>
+  </div>
+</div>
+
+<div class="col-12 mt-3 mx-auto text-center">
+<!-- Form for Delete Action -->
+<form method="POST" action="{{ url_for('overview.customer.customer_delete', customer_id=customer.customer_id) }}" class="container">
+  <!-- Hidden field to store customer_id -->
+  <input type="hidden" name="customer_id" value="{{ customer.customer_id }}">
+  
+  <!-- Submit Button -->
+  <div class="col-12 mt-3 mx-auto text-center">
+  <button type="submit" class="btn btn-danger" onclick="return confirm('確定要刪除嗎?')">刪除</button>
+</div>
+</form>
+</div>
+
+{% endblock %}

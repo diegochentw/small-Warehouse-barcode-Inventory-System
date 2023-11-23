@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h3>{% block title %}編輯產品{% endblock  %}</h3>
+    <hr>
+{% endblock  %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <form method="post">
+                    <!-- Hidden field to store product_id -->
+                <input type="hidden" name="product_id" value="{{ product.product_id }}">
+                <input type="hidden" name="category_id" value="{{ product.category_id }}">
+
+                <div class="row g-3">
+                    <!-- Left column -->
+                    <div class="col-md-5 mx-auto">
+                        <fieldset disabled>
+                        <div class="mb-1">
+                            <label for="category_name" class="form-label">分類名稱</label>
+                            <input type="text" name="category_name" id="disabledTextInput"
+                            value="{{ product.category_name }}" class="form-control" placeholder="{{ product.category_name }}">
+                        </div>
+                        
+                        <div class="mb-1">
+                            <label for="product_name" class="form-label">產品名稱</label>
+                            <input type="text" name="product_name" id="disabledTextInput"
+                                value="{{ product.product_name }}" class="form-control" placeholder="{{ product.product_name }}">
+                        </div>
+                        <div class="mb-1">
+                            <label for="model_name" class="form-label">產品型號</label>
+                            <input type="text" name="model_name" id="disabledTextInput"
+                                value="{{ product.model_name }}" class="form-control" placeholder="{{ product.model_name }}">
+                        </div>
+                    </fieldset>
+                        <div class="mb-1">
+                            <label for="erp_no" class="form-label">ERP編號</label>
+                            <input type="text" name="erp_no" id="disabledTextInput"
+                                value="{{ product.erp_no }}" class="form-control" placeholder="{{ product.erp_no }}">
+                        </div>
+                        <fieldset disabled>                      
+                        <div class="mb-1">
+                            <label for="ean_code" class="form-label">EAN Code</label>
+                            <input type="text" name="ean_code" id="disabledTextInput" 
+                                value="{{ product.ean_code }}" class="form-control" placeholder="{{ product.ean_code }}">
+                        </div>
+                        <div class="mb-1">
+                            <label for="upc_code" class="form-label">UPC Code</label>
+                            <input type="text" name="upc_code" id="disabledTextInput" 
+                                value="{{ product.upc_code }}" class="form-control" placeholder="{{ product.upc_code }}">
+                        </div>
+                    </fieldset>  
+                        <div class="mb-1">
+                            <label for="manufacturing_date" class="form-label">出廠日期</label>
+                            <input type="datetime-local" name="manufacturing_date" id="manufacturing_date" value="{{ product.manufacturing_date }}"
+                                class="form-control">
+                        </div>
+                    </div>
+
+                    <!-- Right column -->
+                    <div class="col-md-5 mx-auto">
+                        <div class="mb-1">
+                            <label for="product_sn" class="form-label">*產品序號</label>
+                            <input type="text" name="product_sn" id="product_sn"
+                                value="{{ product.product_sn }}" class="form-control" required>   
+
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-3 mx-auto text-center">
+                        <button type="submit" class="btn btn-primary">存檔</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<form method="POST" action="{{ url_for('overview.product.product_delete', product_id=product.product_id) }}" class="container">
+
+    <input type="hidden" name="product_id" value="{{ product.product_id }}">
+    
+    <!-- Submit Button -->
+    <div class="col-12 mt-3 mx-auto text-center">
+    <button type="submit" class="btn btn-danger" onclick="return confirm('確定要刪除嗎?')">刪除</button>
+</div>
+  </form>
+
+<!-- Form for Delete Action -->
+
+
+{% endblock %}

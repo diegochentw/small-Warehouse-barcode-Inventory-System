@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h3>{% block title %} 商品數量 {% endblock  %}</h3>
+    <hr>
+    {% if g.user %}
+            
+    {% endif %}
+{% endblock  %}
+
+{% block content %}
+
+  <div class="table-responsive">
+    <table id="product" class="table table-striped nowrap">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>類別</th>
+          <th>產品型號</th>
+          <th>數量</th>
+          <th>EAN碼</th>          
+          <th>產品名稱</th>
+          <th>產品序號</th>
+          <th>ERP編號</th>
+          <th>編輯日期</th>
+          
+        </tr>
+      </thead>
+    </table>
+  </div>
+
+  <script>
+    $(document).ready(function() {
+        $('#product').DataTable({
+          language: {
+              url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/zh-HANT.json',
+            },          
+            "ajax": {
+                "url": "/json/amount",  // 外部 URL
+                "dataSrc": ""
+            },
+            "columns": [
+                { "data": "product_id" },
+                { "data": "category_name" },
+                { "data": "model_name" },                
+                { "data": "product_count" },                
+                { "data": "ean_code" },                
+                { "data": "product_name" },
+                { "data": "product_sn" },
+                { "data": "erp_no" },
+                { 
+            "data": "created_date",
+            "render": function(data, type, row) {
+              if(type === 'display' || type === 'filter'){
+                var date = new Date(data);
+                date.setHours(date.getHours() + 16);
+                return date.toISOString().replace('T', ' ').substring(0, 19);
+              }
+              return data;
+            }
+          },
+
+            ],
+            "order": [[8, "desc"]]
+        });
+    });
+</script>
+
+{% endblock %}
+

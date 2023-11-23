@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h3>{% block title %}建立商品(SKU){% endblock %}</h3>
+  <p>追蹤庫存用途，每個SKU僅代表一種獨特的商品規格</p>
+  <hr>
+  {% if g.user %}
+<a  href="{{ url_for('overview.product.products_amount') }}">顯示序號數量不為0之商品</a>
+<hr>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-1">
+    <div class="card">
+        <div class="card-body">
+            <form method="post">
+                <div class="row g-3">
+                    <!-- Left column -->
+                    <div class="col-md-5 mx-auto">
+                        <div class="mb-1">
+                            <label for="category_id" class="form-label">產品類別</label>
+                            <select name="category_id" id="category_id" class="form-select" required>
+                                <option value="" disabled selected>選擇產品類別</option>
+                                {% for category in categories %}
+                                <option value="{{ category.category_id }}">{{ category.category_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-1">
+                            <label for="product_name" class="form-label">產品名稱</label>
+                            <input type="text" name="product_name" id="product_name"
+                                value="{{ request.form['product_name'] }}" class="form-control"
+                                placeholder="ex: REVOLUTION ATX 3.0 1000">
+                        </div>
+                    </div>
+
+                    <!-- Right column -->
+                    <div class="col-md-5 mx-auto">
+                        <div class="mb-1">
+                            <label for="model_name" class="form-label">產品型號</label>
+                            <input type="text" name="model_name" id="model_name"
+                                value="{{ request.form['model_name'] }}" class="form-control"
+                                placeholder="ex: ERA1000EWT" required>
+                        </div>
+                        <div class="mb-1">
+                            <label for="ean_code" class="form-label">EAN Code</label>
+                            <input type="text" name="ean_code" id="ean_code" value="{{ request.form['ean_code'] }}"
+                                class="form-control" placeholder="ex: 4713157727275">
+                        </div>
+                        <div class="mb-1">
+                            <label for="upc_code" class="form-label">UPC Code</label>
+                            <input type="text" name="upc_code" id="upc_code" value="{{ request.form['upc_code'] }}"
+                                class="form-control" placeholder="ex: 819315027271">
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-1 mx-auto text-center">
+                        <button type="submit" class="btn btn-primary">存檔</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<hr>
+
+
+<div class="table-responsive">
+    <table id="product" class="table table-striped nowrap">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>類別</th>
+          <th>產品型號</th>
+          <th>產品名稱</th>
+          <th>EAN碼</th>
+          <th>UPC碼</th>
+          <th>建立日期</th>          
+        </tr>
+      </thead>
+    </table>
+  </div>
+
+  <script>
+    $(document).ready(function() {
+        $('#product').DataTable({
+            language: {
+              url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/zh-HANT.json',
+            },              
+            "ajax": {
+                "url": "/json/product_sku",  // 外部 URL
+                "dataSrc": ""
+            },
+            "columns": [
+                { "data": "sku_id" },
+                { "data": "category_name" },
+                { "data": "model_name" },                
+                { "data": "product_name" },
+                { "data": "ean_code" },
+                { "data": "upc_code" },
+                { 
+            "data": "created_date",
+            "render": function(data, type, row) {
+              if(type === 'display' || type === 'filter'){
+                var date = new Date(data);
+                date.setHours(date.getHours() + 16);
+                return date.toISOString().replace('T', ' ').substring(0, 19);
+              }
+              return data;
+            }
+          },
+            ],
+            "order": [[6, "desc"]],
+            "columnDefs": [
+                {
+                    "targets": 0,
+                    "render": function ( data, type, row ) {
+                      var link = '<a href="/products/product_sku_update/' + row.sku_id + '">' + data + '</a>';
+                      return link;
+                    }
+                }
+            ]
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h3>{% block title %}產品序號綁定(單筆){% endblock %}</h3>
+  <hr>
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <form method="post">
+                <div class="row g-3">
+                    <!-- Left column -->
+                    <div class="col-md-5 mx-auto">
+                        <div class="mb-3">
+                            <label for="sku_id">選擇SKU</label>
+                            <select name="sku_id" id="sku_id" class="form-control">
+                              {% for sku in skus %}
+                                <option value="{{ sku.sku_id }}">{{ sku.product_name }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                          <div class="mb-3">
+                            <label for="erp_no" class="form-label">ERP編號</label>
+                            <input type="text" name="erp_no" id="erp_no" value="{{ request.form['erp_no'] }}"
+                                class="form-control" placeholder="ex: AR00810400">
+                        </div>                          
+                        <div class="mb-3">
+                            <label for="manufacturing_date" class="form-label">出廠日期</label>
+                            <input type="date" name="manufacturing_date" id="manufacturing_date" value="{{ request.form['manufacturing_date'] }}"
+                                class="form-control" placeholder="ex: 2022-01-01">
+                        </div>
+                    </div>
+
+                    <!-- Right column -->
+                    <div class="col-md-5 mx-auto">
+                        <div class="mb-3">
+                            <label for="product_sn" class="form-label">產品序號</label>
+                            <input type="text" name="product_sn" id="product_sn"
+                                value="{{ request.form['product_sn'] }}" class="form-control" required>
+
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-3 mx-auto text-center">
+                        <button type="submit" class="btn btn-primary">存檔</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

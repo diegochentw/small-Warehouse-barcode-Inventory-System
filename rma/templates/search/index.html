@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h3>{% block title %} 進階查詢 {% endblock %}</h3>
+    <hr>
+    {% if g.user %}
+    {% endif %}
+{% endblock  %}
+
+{% block content %}
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="mx-auto col-10 mt-4">
+            <form method="post" class="mb-4">
+                <div class="mb-3">
+                    <label for="product_sn" class="form-label">產品履歷</label>
+                    <input type="text" id="product_sn" name="product_sn" class="form-control" placeholder="請輸入序號">
+                    <div id="Help" class="form-text">輸入產品序號將以時間排序列出該序號的所有紀錄</div>
+                </div>
+                <button type="submit" class="btn btn-primary">搜尋</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

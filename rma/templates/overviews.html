@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h3>{% block title %}{% endblock %}</h3>
+<hr>
+{% if g.user %}
+
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="my-4">
+  <h5 class="bg-secondary text-white p-2">更新紀錄</h5>  <!-- 標題 -->
+  <div class="container" >
+    <p><h5>新功能</h5></p>
+    <li>增加產品-產品即時庫存 11/23</li>
+    <li>增加出倉-序號範圍出倉功能 11/22</li>
+    <li>增加進/出倉序號重複檢查機制 - 掃碼過程如果有重複序號，則彈出警告視窗並清除欄位 11/22</li>
+    <li>增加出倉資料編輯功能 11/21</li>
+    <p><h5>BUG修復</h5></p>
+    <li>修正進出倉產品分類資料庫寫入錯誤 11/23</li>
+    <li>修正時間錯誤問題 11/21</li>
+  </div>
+
+<div class="my-4">
+  <h5 class="bg-secondary text-white p-2">近期掃碼</h5>  <!-- 標題 -->
+  <div class="table-responsive">
+    <!-- ...你的 DataTables 代碼... -->
+    <table id="shipment" class="table table-striped nowrap">
+      <thead>
+        <tr>
+          <th>掃碼分類</th>
+          <th>#</th>
+          <th>產品分類</th>
+          <th>產品名</th>
+          <th>客戶</th>
+          <th>產品序號</th>
+          <th>掃碼時間</th>
+        </tr>
+      </thead>
+    </table>
+  </div>
+  
+  <script>
+    $(document).ready(function () {
+      $('#shipment').DataTable({
+        "paging": false,  // 不顯示頁碼
+        "lengthChange": false,  // 不顯示顯示數量選項
+        "searching": false,  // 不顯示搜尋框 
+        "info": false,        
+        "ajax": {
+          "url": "/json/overview_shipments",  // 外部 URL
+          "dataSrc": ""
+        },
+        "columns": [
+          { "data": "type" },
+          { "data": "shipment_id" },
+          { "data": "category_name" },
+          { "data": "product_name" },
+          { "data": "customer_name" },
+          { "data": "product_sn" },
+          { 
+            "data": "created_date",
+            "render": function(data, type, row) {
+              if(type === 'display' || type === 'filter'){
+                var date = new Date(data);
+                date.setHours(date.getHours() + 16);
+                return date.toISOString().replace('T', ' ').substring(0, 19);
+              }
+              return data;
+            }
+          },
+        ],
+        "order": [[6, "desc"]]
+      });
+    });
+  </script>
+  </div>
+</div>
+
+<!-- 近期產品區塊 -->
+<div class="my-4">
+  <h5 class="bg-secondary text-white p-2">近期序號</h5>  <!-- 標題 -->
+  <div class="table-responsive">
+    <!-- ...你的 DataTables 代碼... -->
+    <table id="products" class="table table-striped nowrap">
+      <thead>
+        <tr>
+          <th>類別</th>
+          <th>產品型號</th>
+          <th>產品序號</th>
+          <th>ERP編號</th>
+          <th>EAN碼</th>
+          <th>新增日期</th>
+        </tr>
+      </thead>
+    </table>
+    
+    <script>
+      $(document).ready(function () {
+        $('#products').DataTable({
+          "paging": false,  // 不顯示頁碼
+          "lengthChange": false,  // 不顯示顯示數量選項  
+          "searching": false,  // 不顯示搜尋框  
+          "info": false,       
+          "ajax": {
+            "url": "/json/overview_products",  // 外部 URL
+            "dataSrc": ""
+          },
+          "columns": [
+            { "data": "category_name" },
+            { "data": "model_name" },
+            { "data": "product_sn" },
+            { "data": "erp_no" },
+            { "data": "ean_code" },
+            { 
+            "data": "created_date",
+            "render": function(data, type, row) {
+              if(type === 'display' || type === 'filter'){
+                var date = new Date(data);
+                date.setHours(date.getHours() + 16);
+                return date.toISOString().replace('T', ' ').substring(0, 19);
+              }
+              return data;
+            }
+          },
+          ],
+          "order": [[5, "desc"]]
+        })
+      })
+    </script>
+  </div>
+</div>
+
+<!-- 近期商品區塊 -->
+<div class="my-4">
+  <h5 class="bg-secondary text-white p-2">近期商品</h5>  <!-- 標題 -->
+  <div class="table-responsive">
+    <table id="product" class="table table-striped nowrap">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>類別</th>
+          <th>產品型號</th>
+          <th>產品名稱</th>
+          <th>EAN碼</th>
+          <th>UPC碼</th>
+          <th>建立日期</th>          
+        </tr>
+      </thead>
+    </table>
+  </div>
+
+  <script>
+    $(document).ready(function() {
+        $('#product').DataTable({
+          "paging": false,  // 不顯示頁碼
+          "lengthChange": false,  // 不顯示顯示數量選項  
+          "searching": false,  // 不顯示搜尋框  
+          "info": false,             
+            "ajax": {
+                "url": "/json/product_sku",  // 外部 URL
+                "dataSrc": ""
+            },
+            "columns": [
+                { "data": "sku_id" },
+                { "data": "category_name" },
+                { "data": "model_name" },                
+                { "data": "product_name" },
+                { "data": "ean_code" },
+                { "data": "upc_code" },
+                { 
+            "data": "created_date",
+            "render": function(data, type, row) {
+              if(type === 'display' || type === 'filter'){
+                var date = new Date(data);
+                date.setHours(date.getHours() + 16);
+                return date.toISOString().replace('T', ' ').substring(0, 19);
+              }
+              return data;
+            }
+          },
+            ],
+            "order": [[6, "desc"]]
+      })
+    })
+  </script>
+
+<!-- 近期客戶區塊 -->
+<div class="my-4">
+  <h5 class="bg-secondary text-white p-2">近期客戶</h5>  <!-- 標題 -->
+  <div class="table-responsive">
+    <!-- ...你的 DataTables 代碼... -->
+    <table id="customer" class="table table-striped nowrap">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>客戶名稱</th>
+          <th>類型</th>
+          <th>註記</th>
+        </tr>
+      </thead>
+      <tbody>
+    </table>
+  
+  <script>
+    $(document).ready(function () {
+  
+      $('#customer').DataTable({
+        "paging": false,  // 不顯示頁碼
+        "lengthChange": false,  // 不顯示顯示數量選項  
+        "searching": false,  // 不顯示搜尋框  
+        "info": false,   
+        "ajax": {
+          "url": "/json/overview_customers",  // 外部 URL
+          "dataSrc": ""
+        },
+        "columns": [
+          { "data": "customer_id" },
+          { "data": "customer_name" },
+          { "data": "type" },
+          { "data": "notes" },
+        ],
+        "order": [[0, "desc"]]
+      })
+    })
+  </script>
+  </div>
+</div>
+
+<!-- 近期RMA區塊 -->
+<div class="my-4">
+  <h5 class="bg-secondary text-white p-2">近期RMA</h5>  <!-- 標題 -->
+  <div class="table-responsive">
+    <!-- ...你的 DataTables 代碼... -->
+    <table id="rma" class="table table-striped nowrap">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>收件日期</th>          
+          <th>客戶名稱</th>
+          <th>退貨理由</th>              
+          <th>機種</th>
+          <th>產品序號</th>
+          <th>問題分類</th>
+          <th>處理方式</th>          
+        </tr>
+      </thead>
+      <tbody>
+    </table>
+  
+  <script>
+    $(document).ready(function () {
+  
+      $('#rma').DataTable({
+        "paging": false,  // 不顯示頁碼
+        "lengthChange": false,  // 不顯示顯示數量選項  
+        "searching": false,  // 不顯示搜尋框  
+        "info": false,   
+        "ajax": {
+          "url": "/json/rma",  // 外部 URL
+          "dataSrc": ""
+        },
+        "columns": [
+                { "data": "rma_id" },
+                { "data": "request_date" },                
+                { "data": "customer_name" },
+                { "data": "return_reason" },                
+                { "data": "product_name" },
+                { "data": "product_sn" },
+                { "data": "issue_category" },
+                { "data": "handling_method" },
+            ],
+        "order": [[0, "desc"]]
+      })
+    })
+  </script>
+  </div>
+</div>
+ 
+
+{% endblock %}

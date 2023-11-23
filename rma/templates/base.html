@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<title>{% block title %} {% endblock %} - Enermax RMA </title>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- added by Diego -->
+<link href="{{ url_for('static', filename='assets/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+<script src="{{ url_for('static', filename='assets/js/color-modes.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<script type="text/javascript" language="javascript"
+    src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<!-- 最上層選單 -->
+<!-- place navbar here -->
+<div class="px-3 py-2 text-bg-dark border-bottom">
+    <div class="container">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            <a href="/" class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none">
+                <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap">
+                    <use xlink:href="#bootstrap" />
+                </svg>保銳科技-有恆倉即時庫存系統
+            </a>
+
+            <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
+                <li>
+                    <!-- <a href="#" class="nav-link text-secondary"> -->
+                    <a href="/shipment/scan_in" class="nav-link text-white">
+                        <svg class="bi d-block mx-auto mb-1" width="24" height="24">
+                            <use xlink:href="#arrow_down" />
+                        </svg>
+                        進倉
+                    </a>
+                </li>
+                <li>
+                    <a href="/shipment/scan_out" class="nav-link text-white">
+                        <svg class="bi d-block mx-auto mb-1" width="24" height="24">
+                            <use xlink:href="#arrow_up" />
+                        </svg>
+                        出倉
+                    </a>
+                </li>
+                <li>
+                    <a href="/products" class="nav-link text-white">
+                        <svg class="bi d-block mx-auto mb-1" width="24" height="24">
+                            <use xlink:href="#table" />
+                        </svg>
+                        產品
+                    </a>
+                </li>
+                <li>
+                    <a href="/customers" class="nav-link text-white">
+                        <svg class="bi d-block mx-auto mb-1" width="24" height="24">
+                            <use xlink:href="#people-circle" />
+                        </svg>
+                        客戶
+                    </a>
+                </li>
+                <li>
+                    <a href="/rma" class="nav-link text-white">
+                        <svg class="bi d-block mx-auto mb-1" width="24" height="24">
+                            <use xlink:href="#tools" />
+                        </svg>
+                        RMA
+                    </a>
+                </li>                
+                <li>
+            <a href="/search" class="nav-link text-white">
+            <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#search"/></svg>
+            搜尋
+            </a>
+        </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- SVG向量圖檔位置 -->
+
+<svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+    <symbol id="bootstrap" viewBox="0 0 16 16">
+        <title>Bootstrap</title>
+        <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M1.5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 1-1 0v-3A1.5 1.5 0 0 1 1.5 0h3a.5.5 0 0 1 0 1h-3zM11 .5a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 1 16 1.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 1-.5-.5zM.5 11a.5.5 0 0 1 .5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 1 0 1h-3A1.5 1.5 0 0 1 0 14.5v-3a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v3a1.5 1.5 0 0 1-1.5 1.5h-3a.5.5 0 0 1 0-1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 1 .5-.5zM3 4.5a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7zm2 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7zm2 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7zm2 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-7zm3 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7z">
+        </path>
+    </symbol>
+    <symbol id="arrow_down" viewBox="0 0 16 16">
+        <path
+            d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z" />
+    </symbol>
+    <symbol id="arrow_up" viewBox="0 0 16 16">
+        <path
+            d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z" />
+        <path fill-rule="evenodd"
+            d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z" />
+    </symbol>
+    <symbol id="table" viewBox="0 0 16 16">
+        <path
+            d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm15 2h-4v3h4V4zm0 4h-4v3h4V8zm0 4h-4v3h3a1 1 0 0 0 1-1v-2zm-5 3v-3H6v3h4zm-5 0v-3H1v2a1 1 0 0 0 1 1h3zm-4-4h4V8H1v3zm0-4h4V4H1v3zm5-3v3h4V4H6zm4 4H6v3h4V8z" />
+    </symbol>
+    <symbol id="people-circle" viewBox="0 0 16 16">
+        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+        <path fill-rule="evenodd"
+            d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
+    </symbol>
+    <symbol id="search" viewBox="0 0 16 16">
+        <path
+            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+    </symbol>
+    <symbol id="tools" viewBox="0 0 16 16">
+        <path d="M1 0 0 1l2.2 3.081a1 1 0 0 0 .815.419h.07a1 1 0 0 1 .708.293l2.675 2.675-2.617 2.654A3.003 3.003 0 0 0 0 13a3 3 0 1 0 5.878-.851l2.654-2.617.968.968-.305.914a1 1 0 0 0 .242 1.023l3.27 3.27a.997.997 0 0 0 1.414 0l1.586-1.586a.997.997 0 0 0 0-1.414l-3.27-3.27a1 1 0 0 0-1.023-.242L10.5 9.5l-.96-.96 2.68-2.643A3.005 3.005 0 0 0 16 3c0-.269-.035-.53-.102-.777l-2.14 2.141L12 4l-.364-1.757L13.777.102a3 3 0 0 0-3.675 3.68L7.462 6.46 4.793 3.793a1 1 0 0 1-.293-.707v-.071a1 1 0 0 0-.419-.814L1 0Zm9.646 10.646a.5.5 0 0 1 .708 0l2.914 2.915a.5.5 0 0 1-.707.707l-2.915-2.914a.5.5 0 0 1 0-.708ZM3 11l.471.242.529.026.287.445.445.287.026.529L5 13l-.242.471-.026.529-.445.287-.287.445-.529.026L3 15l-.471-.242L2 14.732l-.287-.445L1.268 14l-.026-.529L1 13l.242-.471.026-.529.445-.287.287-.445.529-.026L3 11Z"/>
+</svg>
+
+<!-- 搜尋/註冊/登入列 -->
+<p></p>
+<div class="container">
+    <div class="row">
+        <!-- <form class="col-12 col-lg-6 mb-2 mb-lg-0 me-lg-auto" action="/search" method="get">
+            <div class="input-group">
+                <input type="text" class="form-control" name="keyword" placeholder="產品序號查詢">
+                <button type="submit" class="btn btn-primary">搜尋</button>
+            </div>
+        </form> -->
+
+        <div class="col-12  d-flex justify-content-end">
+            {% if g.user %}
+            <span class="navbar-text me-2">
+                {{ g.user['username'] }}
+            </span>
+            <button type="button" class="btn btn-light text-dark me-2">
+                <a href="{{ url_for('auth.logout') }}">登出</a>
+            </button>
+            {% else %}
+            <button type="button" class="btn btn-light text-dark me-2">
+                <a href="{{ url_for('auth.register') }}">註冊</a>
+            </button>
+            <button type="button" class="btn btn-light text-dark me-2">
+                <a href="{{ url_for('auth.login') }}">登入</a>
+            </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!-- 主要內容 -->
+<p></p>
+<div class="container text-left">
+    <div class="row">
+        <div class="col-12">
+            <section>
+                <header>
+                    {% block header %}{% endblock %}
+                </header>
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                  <div class="flash-messages">
+                    {% for message in messages %}
+                      <div class="flash-message">
+                        {{ message }}
+                      </div>
+                    {% endfor %}
+                  </div>
+                  {% set _ = session.pop('_flashes', None) %}  <!-- Clear the flash messages from the session -->
+                {% endif %}
+              {% endwith %}
+
+
+              
+
+
+                {% block content %}{% endblock %}
+            </section>
+        </div>
+    </div>
+</div>
+
+
+
+<footer>
+    <!-- place footer here -->
+    <div class="container">
+        <footer class="py-3 my-4">
+            <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+                <li class="nav-item"><a href="/shipment/scan_in" class="nav-link px-2 text-body-secondary">進倉(進貨)</a></li>
+                <li class="nav-item"><a href="/shipment/scan_out" class="nav-link px-2 text-body-secondary">出倉(出貨)</a></li>
+                <li class="nav-item"><a href="/products" class="nav-link px-2 text-body-secondary">產品(序號)</a></li>
+                <li class="nav-item"><a href="/customers" class="nav-link px-2 text-body-secondary">客戶/供應商</a></li>
+                <!-- <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">進階搜尋</a></li> -->
+            </ul>
+            <p class="text-center text-body-secondary">Copyleft © 2023 Enermax - Diego Chen </p>
+        </footer>
+    </div>
+</footer>
+
+<!-- Bootstrap JavaScript Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+    integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
+    </script>
+
+<script src="../static/assets/dist/js/bootstrap.bundle.min.js"></script>

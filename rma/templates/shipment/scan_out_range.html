@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h3>{% block title %}序號範圍手動出倉{% endblock %}</h3>
+<hr>
+{% endblock %}
+
+{% block content %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        function getProductInfo(inputField) {
+            var productSn = inputField.val();
+            var productInfoContainer = inputField.siblings('.product-info');
+
+            // Modify the request to send the specific serial number
+            $.get("/json/product?sn=" + productSn, function(data) {
+                if (data && data.product_sn === productSn) {
+                    productInfoContainer.html(`
+                        產品名稱: ${data.product_name} 型號: ${data.model_name} ERP 編號: ${data.erp_no}
+                    `);
+                } else {
+                    productInfoContainer.html("<p>找不到匹配的產品信息</p>");
+                }
+            });
+        }
+
+        function addProductSnInput() {
+            var newProductSnInput = $(".product-sn-input:first").clone();
+            newProductSnInput.find("input[type='text']").val('');
+            newProductSnInput.find('.product-info').empty();
+            newProductSnInput.append('<a href="#" class="remove-sn-link">刪除</a>');
+            newProductSnInput.appendTo("#product-sn-container");
+            newProductSnInput.find("input[type='text']").focus();            
+        }
+
+        $("#add-product-sn").click(addProductSnInput);
+        $(document).on('click', '.remove-sn-link', function(e) {
+            e.preventDefault();
+            $(this).closest('.product-sn-input').remove();
+        }).on('keydown', '.product-sn-input input[type="text"]', function(e) {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                e.preventDefault();
+                addProductSnInput();
+            }
+        }).on('change', '.product-sn-input input[type="text"]', function() {
+            getProductInfo($(this));
+        });
+
+        $('#start_product_sn, #end_product_sn').change(function() {
+            var startSn = $('#start_product_sn').val();
+            var endSn = $('#end_product_sn').val();
+
+            $("#hidden-sn-inputs").empty();
+
+            // Limit the number of inputs we create for performance reasons
+            const MAX_SN_COUNT = 500; // You can adjust this limit as needed
+            var snCount = Math.min(endSn - startSn + 1, MAX_SN_COUNT);
+
+            if (startSn && endSn && snCount <= MAX_SN_COUNT) {
+                for (var i = 0; i < snCount; i++) {
+                    var input = $('<input>')
+                        .attr('type', 'hidden')
+                        .attr('name', 'product_sn[]')
+                        .val(parseInt(startSn) + i);
+                    $("#hidden-sn-inputs").append(input);
+                }
+            }
+        });
+    });
+</script>
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="mx-auto col-10 mt-4">
+            <form method="post" class="container" action="{{ url_for('overview.scan_out.scan_out_range')}}">
+                <div class="mb-3">
+                    <label for="customer_id" class="form-label">客戶(客供商/消費者)</label>
+                    <select name="customer_id" id="customer_id" class="form-select" required>
+                        <option value="" disabled selected>選擇供應商/客戶</option>
+                        {% for customer in customers %}
+                            <option value="{{ customer.customer_id }}">{{ customer.customer_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="start_product_sn" class="form-label">產品序號範圍 (起始)</label>
+                    <input type="text" name="start_product_sn" id="start_product_sn" class="form-control">
+                    <label for="end_product_sn" class="form-label">產品序號範圍 (結束)</label>
+                    <input type="text" name="end_product_sn" id="end_product_sn" class="form-control">
+                </div>
+
+                <!-- Hidden div to hold the range of serial numbers as hidden inputs -->
+                <div id="hidden-sn-inputs"></div>
+
+                <div class="mb-3">
+                    <label for="note" class="form-label">備註</label>
+                    <input type="text" name="note" id="note" value="{{ request.form['note'] }}" class="form-control">
+                </div>
+
+                <button type="submit" class="btn btn-primary">存檔</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

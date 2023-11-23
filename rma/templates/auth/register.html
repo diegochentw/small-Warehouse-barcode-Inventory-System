@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1>{% block title %} 註冊 {% endblock  %}</h1>
+{% endblock  %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <form method="post" ">
+  <div class=" mb-3">
+        <label for="username" class="form-label">帳號</label>
+        <input name="username" id="username" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">密碼</label>
+      <input name="password" id="password" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">註冊</button>
+    </form>
+  </div>
+</div>
+</div>
+{% endblock %}
