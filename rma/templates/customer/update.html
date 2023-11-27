@@ -73,6 +73,7 @@
                           <option value="零售商" {% if customer.type == '零售商' %}selected{% endif %}>零售商 (進倉=RMA)</option>
                           <option value="電商" {% if customer.type == '電商' %}selected{% endif %}>電商 (進倉=退貨、出倉=寄倉)</option>
                           <option value="RMA維修客人" {% if customer.type == 'RMA維修客人' %}selected{% endif %}>RMA維修客人</option>
+                          <option value="其它" {% if customer.type == '其它' %}selected{% endif %}>其它</option>
                       </select>
                       
                       </div>
