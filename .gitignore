@@ -6,3 +6,5 @@ studio.code-workspace
 rma/__pycache__/
 .venv
 rma/json/
+rma/json/product_search_sku_stock.json
+rma/json/products.json

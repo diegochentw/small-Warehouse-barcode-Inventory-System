@@ -288,7 +288,7 @@ def scan_in_range():
         
         db.commit()
         flash('進倉成功')
-        return redirect(url_for('overview.shipment.scan_in'))
+        return redirect(url_for('overview.scan_in.scan_in'))
 
     return render_template('shipment/scan_in_range.html', customers=customers)
 
