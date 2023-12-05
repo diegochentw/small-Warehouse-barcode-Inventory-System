@@ -1,34 +1,26 @@
 [
     {
-        "category_name": "\u5176\u4ed6\u5468\u908a",
-        "product_name": "DIEGO",
-        "model_name": "DIEGOTEST",
-        "scan_in": 2,
-        "scan_out": 1,
-        "stock": 1
-    },
-    {
         "category_name": "\u96fb\u6e90\u4f9b\u61c9\u5668",
         "product_name": "REVOLUTION D.F. X (ERT1050EWT)",
         "model_name": "ERT1050EWT",
-        "scan_in": 27,
-        "scan_out": 22,
-        "stock": 5
+        "scan_in": 138,
+        "scan_out": 34,
+        "stock": 104
     },
     {
         "category_name": "\u96fb\u6e90\u4f9b\u61c9\u5668",
         "product_name": "REVOLUTION D.F. X (ERT1200EWT)",
         "model_name": "ERT1200EWT",
-        "scan_in": 27,
-        "scan_out": 22,
-        "stock": 5
+        "scan_in": 86,
+        "scan_out": 39,
+        "stock": 47
     },
     {
         "category_name": "\u96fb\u6e90\u4f9b\u61c9\u5668",
         "product_name": "REVOLUTION D.F. X (ERT850EWT)",
         "model_name": "ERT850EWT",
-        "scan_in": 35,
-        "scan_out": 33,
-        "stock": 2
+        "scan_in": 52,
+        "scan_out": 52,
+        "stock": 0
     }
 ]
