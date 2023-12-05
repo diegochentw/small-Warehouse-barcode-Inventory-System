@@ -15,7 +15,7 @@
             var productSn = inputField.val();
             var productInfoContainer = inputField.siblings('.product-info');
 
-            // Modify the request to send the specific serial number
+            // Modify the request to send the specific serial number 
             $.get("/json/product?sn=" + productSn, function(data) {
                 if (data && data.product_sn === productSn) {
                     productInfoContainer.html(`

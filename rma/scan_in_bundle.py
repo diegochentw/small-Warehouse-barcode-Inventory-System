@@ -269,7 +269,7 @@ def scan_in_range():
         if error is not None:
             flash(error)
         else:
-            db_start_time = time.time()  # DB operations start timestamp
+            db_start_time = time.time()  # DB operations start timestamp 
             try:
                 db = get_db()
 

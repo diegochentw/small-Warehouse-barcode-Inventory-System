@@ -5,3 +5,4 @@ tests
 studio.code-workspace
 rma/__pycache__/
 .venv
+rma/json/
