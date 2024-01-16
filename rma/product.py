@@ -335,18 +335,11 @@ def product_create_batch_scope():
                 # product_sn = f'{product_sn_prefix}{i:04d}'  # 根據序號範圍生成帶有前綴的產品序號
                 product_sn = f'{product_sn_prefix}{i:0{sn_digit_length}d}'  # 使用使用者指定的序號位數來生成帶有前綴的產品序號
 
-                # Check if product_sn already exists in the database
-                existing_product_sn_query = 'SELECT product_sn FROM product WHERE product_sn = ?'
-                existing_product_sn = db.execute(existing_product_sn_query, (product_sn,)).fetchone()
-
-                if existing_product_sn:
-                    flash(f'Product serial number {product_sn} already exists and cannot be added again.')
-                else:
-                    db.execute(
-                        'INSERT INTO product (sku_id, erp_no, product_sn, manufacturing_date )'
-                        ' VALUES (?, ?, ?, ?)',
-                        (sku_id, erp_no, product_sn, manufacturing_date)
-                    )
+                db.execute(
+                    'INSERT INTO product (sku_id, erp_no, product_sn, manufacturing_date )'
+                    ' VALUES (?, ?, ?, ?)',
+                    (sku_id, erp_no, product_sn, manufacturing_date)
+                )
 
             db.commit()
             flash(f'批次新增序號已完成')            
@@ -434,13 +427,11 @@ def product_search_sku_stock():
             SUM(CASE WHEN s.type = '出倉' THEN 1 ELSE 0 END) AS scan_out,
             SUM(CASE WHEN s.type = '進倉' THEN 1 ELSE 0 END) - 
             SUM(CASE WHEN s.type = '出倉' THEN 1 ELSE 0 END) AS stock,
-            c.category_name,
             ps.product_name	
                            
             FROM shipment_product sp
             JOIN shipment s ON sp.shipment_id = s.shipment_id
             JOIN product p ON sp.product_id = p.product_id
-            JOIN category c ON c.category_id = s.category_id
             JOIN product_sku ps ON p.sku_id = ps.sku_id
             GROUP BY ps.model_name;
             
@@ -449,7 +440,6 @@ def product_search_sku_stock():
     json_result = []
     for sku_stock in sku_stock:
         json_result.append({
-            'category_name': sku_stock['category_name'],
             'product_name': sku_stock['product_name'],
             'model_name': sku_stock['model_name'],
             'scan_in': sku_stock['scan_in'],

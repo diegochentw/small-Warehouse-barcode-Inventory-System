@@ -1,14 +1,68 @@
 [
     {
-        "category_name": "\u96fb\u6e90\u4f9b\u61c9\u5668",
-        "product_name": "REVOLUTION D.F. X (ERT1050EWT)",
-        "model_name": "ERT1050EWT",
-        "scan_in": 138,
-        "scan_out": 34,
-        "stock": 104
+        "product_name": "LIQMAXFLO (ELC-LMF240T-ARGB)",
+        "model_name": "ELC-LMF240T-ARGB",
+        "scan_in": 18,
+        "scan_out": 0,
+        "stock": 18
     },
     {
-        "category_name": "\u96fb\u6e90\u4f9b\u61c9\u5668",
+        "product_name": "LIQMAXFLO (ELC-LMF420T-ARGB)",
+        "model_name": "ELC-LMF420T-ARGB",
+        "scan_in": 2,
+        "scan_out": 0,
+        "stock": 2
+    },
+    {
+        "product_name": "REVOLUTION ATX3.0 (ERA1000EWT)",
+        "model_name": "ERA1000EWT",
+        "scan_in": 1,
+        "scan_out": 0,
+        "stock": 1
+    },
+    {
+        "product_name": "REVOLUTION ATX3.0 (ERA1200EWT)",
+        "model_name": "ERA1200EWT",
+        "scan_in": 30,
+        "scan_out": 0,
+        "stock": 30
+    },
+    {
+        "product_name": "REVOLUTION D.F. (ERF650AWT)",
+        "model_name": "ERF650AWT",
+        "scan_in": 14,
+        "scan_out": 0,
+        "stock": 14
+    },
+    {
+        "product_name": "REVOLUTION D.F. (ERF750EWT)",
+        "model_name": "ERF750EWT",
+        "scan_in": 1,
+        "scan_out": 0,
+        "stock": 1
+    },
+    {
+        "product_name": "REVOLUTION D.F. (ERF850EWT)",
+        "model_name": "ERF850EWT",
+        "scan_in": 7,
+        "scan_out": 0,
+        "stock": 7
+    },
+    {
+        "product_name": "REVOLUTION D.F. 2 (ERS850EWT)",
+        "model_name": "ERS850EWT",
+        "scan_in": 38,
+        "scan_out": 37,
+        "stock": 1
+    },
+    {
+        "product_name": "REVOLUTION D.F. X (ERT1050EWT)",
+        "model_name": "ERT1050EWT",
+        "scan_in": 143,
+        "scan_out": 36,
+        "stock": 107
+    },
+    {
         "product_name": "REVOLUTION D.F. X (ERT1200EWT)",
         "model_name": "ERT1200EWT",
         "scan_in": 86,
@@ -16,11 +70,17 @@
         "stock": 47
     },
     {
-        "category_name": "\u96fb\u6e90\u4f9b\u61c9\u5668",
         "product_name": "REVOLUTION D.F. X (ERT850EWT)",
         "model_name": "ERT850EWT",
-        "scan_in": 52,
+        "scan_in": 185,
         "scan_out": 52,
-        "stock": 0
+        "stock": 133
+    },
+    {
+        "product_name": "test",
+        "model_name": "test",
+        "scan_in": 50,
+        "scan_out": 0,
+        "stock": 50
     }
 ]
