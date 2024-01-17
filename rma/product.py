@@ -309,11 +309,24 @@ def product_create_batch_scope():
 
         error = None
 
+        def is_valid_sn_prefix(prefix):
+            """
+            檢查前綴是否為字母或數字或包含斜線
+            """
+            for char in prefix:
+                if not (char.isalnum() or char == "\\"):
+                    return False
+            return True
+
         if product_sn_range_start > product_sn_range_end:
             error = '序號範圍的結束值必須大於或等於序號範圍的起始值'
         elif not product_sn_prefix or product_sn_range_start <= 0 or product_sn_range_end <= 0:
             error = '請填寫完整前綴和序號範圍'
-        elif not product_sn_prefix.isalnum():
+        #elif not product_sn_prefix.isalnum():
+        elif not is_valid_sn_prefix(product_sn_prefix):
+            error = '前綴必須為字母或數字或包含斜線'
+            flash(error)
+
             existing_product_sn_query = 'SELECT product_sn FROM product WHERE product_sn = ?'
             existing_product_sn = db.execute(existing_product_sn_query, (product_sn,)).fetchone()
 
@@ -335,14 +348,18 @@ def product_create_batch_scope():
                 # product_sn = f'{product_sn_prefix}{i:04d}'  # 根據序號範圍生成帶有前綴的產品序號
                 product_sn = f'{product_sn_prefix}{i:0{sn_digit_length}d}'  # 使用使用者指定的序號位數來生成帶有前綴的產品序號
 
-                db.execute(
-                    'INSERT INTO product (sku_id, erp_no, product_sn, manufacturing_date )'
-                    ' VALUES (?, ?, ?, ?)',
-                    (sku_id, erp_no, product_sn, manufacturing_date)
-                )
+                try:
+                    db.execute(
+                        'INSERT INTO product (sku_id, erp_no, product_sn, manufacturing_date )'
+                        ' VALUES (?, ?, ?, ?)',
+                        (sku_id, erp_no, product_sn, manufacturing_date)
+                    )
+                except sqlite3.IntegrityError:
+                    flash(f'產品序號 {product_sn} 已存在')
+                    continue
 
             db.commit()
-            flash(f'批次新增序號已完成')            
+            flash(f'作業已完成')            
             return redirect(url_for('overview.product.products'))
         
     if categories is None:
