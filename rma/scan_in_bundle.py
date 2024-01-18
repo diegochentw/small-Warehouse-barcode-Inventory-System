@@ -283,18 +283,30 @@ def scan_in_range():
             flash('請至少輸入一個產品序號')
             return render_template('shipment/scan_in_range.html', customers=customers)
 
-        # 檢查序號是否已經存在於 shipment_product 表中
-        existing_serials = []
+        # 檢查序號的庫存情況
+        serials_can_be_stocked = []
         for sn in product_sn_list:
-            existing_product = db.execute(
-                'SELECT sp.shipment_id FROM shipment_product sp JOIN product p ON sp.product_id = p.product_id WHERE p.product_sn = ?', 
+            net_inflow = db.execute(
+                '''SELECT 
+                    SUM(CASE WHEN s.type = '進倉' THEN 1 ELSE 0 END) - 
+                    SUM(CASE WHEN s.type = '出倉' THEN 1 ELSE 0 END) AS net_inflow
+                FROM shipment_product sp
+                JOIN shipment s ON sp.shipment_id = s.shipment_id
+                JOIN product p ON sp.product_id = p.product_id
+                WHERE p.product_sn = ?
+                GROUP BY sp.product_id''',
                 (sn,)
             ).fetchone()
-            if existing_product:
-                existing_serials.append(sn)
 
-        if existing_serials:
-            flash(f'以下序號已存在進貨紀錄：{", ".join(existing_serials)}，請檢查序號範圍')
+            # 判斷庫存是否為0或負數
+            if net_inflow is None or net_inflow[0] <= 0:
+                serials_can_be_stocked.append(sn)
+
+        # 過濾掉不可進貨的序號
+        product_sn_list = [sn for sn in product_sn_list if sn in serials_can_be_stocked]
+
+        if not product_sn_list:
+            flash('無有效的產品序號可進貨')
             return render_template('shipment/scan_in_range.html', customers=customers)
 
         # 插入資料到資料庫

@@ -295,10 +295,12 @@ def generate_serial_numbers(start_sn, end_sn):
         for i in range(int(start_num), int(end_num) + 1)
     ]
 
-# @audit-info 批次出倉資料
+# @audit-info 序號範圍出倉
+
 @bp_scan_out.route('/scan_out_range', methods=('GET', 'POST'))
 def scan_out_range():
-    customers = None
+    db = get_db()
+    customers = db.execute('SELECT customer_id, customer_name FROM customer').fetchall()
     
     if request.method == 'POST':
         start_time = time.time()  # Start timestamp
@@ -314,61 +316,49 @@ def scan_out_range():
             flash(str(ve))
             return render_template('shipment/scan_out_range.html', customers=customers)
 
-        error = None
         if not product_sn_list:
-            error = '請至少輸入一個產品序號'
-        
-        if error is not None:
-            flash(error)
-        else:
-            db_start_time = time.time()  # DB operations start timestamp
-            try:
-                db = get_db()
+            flash('請至少輸入一個產品序號')
+            return render_template('shipment/scan_out_range.html', customers=customers)
 
-                # Insert shipment
-                db.execute('INSERT INTO shipment (customer_id, type) VALUES (?, "出倉")', (customer_id,))
-                shipment_id = db.execute('SELECT last_insert_rowid()').fetchone()[0]
+        # 檢查序號的庫存情況
+        serials_with_positive_stock = []
+        for sn in product_sn_list:
+            net_inflow = db.execute(
+                '''SELECT 
+                    SUM(CASE WHEN s.type = '進倉' THEN 1 ELSE 0 END) - 
+                    SUM(CASE WHEN s.type = '出倉' THEN 1 ELSE 0 END) AS net_inflow
+                FROM shipment_product sp
+                JOIN shipment s ON sp.shipment_id = s.shipment_id
+                JOIN product p ON sp.product_id = p.product_id
+                WHERE p.product_sn = ?
+                GROUP BY sp.product_id''',
+                (sn,)
+            ).fetchone()
 
-                # Get product IDs in bulk
-                product_ids = {sn: get_product_id(sn) for sn in product_sn_list}
+            # 判斷庫存是否大於0
+            if net_inflow and net_inflow[0] > 0:
+                serials_with_positive_stock.append(sn)
 
-                # Batch insert for shipment_product
-                data_to_insert = [(shipment_id, product_ids[sn]) for sn in product_sn_list if product_ids[sn] is not None]
-                db.executemany('INSERT INTO shipment_product (shipment_id, product_id) VALUES (?, ?)', data_to_insert)
+        # 過濾掉庫存不足的序號
+        product_sn_list = [sn for sn in product_sn_list if sn in serials_with_positive_stock]
 
-                # Get category_ids in bulk
-                category_start_time = time.time()  # Category fetch start timestamp
-                product_ids_values = list(filter(None, product_ids.values()))
-                category_query = '''
-                SELECT p.product_id, ps.product_name 
-                FROM product p
-                JOIN product_sku ps ON p.sku_id = ps.sku_id WHERE product_id IN ({})
-                '''.format(', '.join(['?']*len(product_ids_values)))
-                categories = db.execute(category_query, product_ids_values).fetchall()
-                category_mapping = {row[0]: row[1] for row in categories}
+        if not product_sn_list:
+            flash('無庫存足夠的產品序號可出倉')
+            return render_template('shipment/scan_out_range.html', customers=customers)
 
-                # Update shipment with category_id
-                for product_id in product_ids_values:
-                    update_shipment_query = 'UPDATE shipment SET category_id = ? WHERE shipment_id = ?'
-                    db.execute(update_shipment_query, (category_mapping[product_id], shipment_id))
+        # 出倉操作
+        db.execute('INSERT INTO shipment (customer_id, type) VALUES (?, "出倉")', (customer_id,))
+        shipment_id = db.execute('SELECT last_insert_rowid()').fetchone()[0]
 
-                db.commit()
-                flash('出倉成功')
-                logging.info(f"Total DB operations time: {time.time() - db_start_time:.2f} seconds.")
-                return redirect(url_for('overview.scan_out.scan_out'))
+        product_ids = {sn: get_product_id(sn) for sn in product_sn_list}
+        data_to_insert = [(shipment_id, product_ids[sn]) for sn in product_sn_list if product_ids[sn] is not None]
+        db.executemany('INSERT INTO shipment_product (shipment_id, product_id) VALUES (?, ?)', data_to_insert)
 
-            except Exception as e:
-                logging.error(f"SQL Error: {e}")
-                db.rollback()
-
-    if customers is None:
-        db = get_db()
-        fetch_start_time = time.time()  # Customer fetch start timestamp
-        customers = db.execute('SELECT customer_id, customer_name FROM customer').fetchall()
-        logging.info(f"Time taken to fetch customers: {time.time() - fetch_start_time:.2f} seconds.")    
+        db.commit()
+        flash('出倉成功')
+        return redirect(url_for('overview.scan_out.scan_out'))
 
     return render_template('shipment/scan_out_range.html', customers=customers)
-
 
 # @audit-issue 出貨資料更新
 # @bp_scan_out.route('/shipment_update/<int:shipment_id>', methods=('GET', 'POST'))
