@@ -18,61 +18,77 @@
         var scannedCount = 0;   // 用來追蹤掃描的產品數量
         var scannedSnSet = new Set(); // 建立一個集合來儲存掃描過的序號
 
-        function updateScannedCount () {
+        function updateScannedCount() {
             $("#scanned_count").text(scannedCount);
         }
+
         function getProductInfo(inputField) {
             var productSn = inputField.val();
             var productInfoContainer = inputField.siblings('.product-info');
 
             if (scannedSnSet.has(productSn)) {
-            alert("產品序號 " + productSn + " 已被掃描，請勿重複掃描");
-            inputField.val(''); // 清除輸入欄位
-            return;
-        }
+                alert("產品序號 " + productSn + " 已被掃描，請勿重複掃描");
+                inputField.val(''); // 清除輸入欄位
+                return;
+            }
 
             $.get("/json/product", function(productData) {
                 var foundProduct = productData.find(function(product) {
                     return product.product_sn === productSn;
                 });
 
-                scannedSnSet.add(productSn); // 將新掃描的序號添加到集合中
-
-                var productInfoContainer = inputField.siblings('.product-info');                
-
                 if (!foundProduct) {
                     productInfoContainer.html("<p>找不到匹配的產品信息</p>");
                     return;
                 }
 
-                $.get("/json/shipment_in", function(shipmentData) {
-                    var hasShipmentRecord = shipmentData.some(function(shipment) {
-                        return shipment.product_sn === productSn;
-                    });
-
-                    if (hasShipmentRecord) {
-                        alert("產品序號 " + productSn + " 已有進貨紀錄，請重新掃描");
-                        inputField.val(''); // 清除輸入欄位
-                        productInfoContainer.empty();
-                        return;
-                    }
-
-                    var currentDate = new Date(); // 現在的日期和時間
-                    var createdDate = new Date(foundProduct.created_date);
-                    var manufacturingDate = new Date(foundProduct.manufacturing_date);
-                    var diffInTimeCreated = currentDate - createdDate;
-                    var diffInTimeManufacturing = currentDate - manufacturingDate;
-                    var diffInDaysCreated = diffInTimeCreated / (1000 * 3600 * 24);
-                    var diffInDaysManufacturing = diffInTimeManufacturing / (1000 * 3600 * 24);
-
-                    productInfoContainer.html(`
-                        產品名稱: ${foundProduct.product_name}、型號: ${foundProduct.model_name}、ERP 編號: ${foundProduct.erp_no} <br>
-                        產品建檔: ${foundProduct.created_date} (距今 ${Math.round(diffInDaysCreated)} 天)<br>
-                        出廠日期: ${foundProduct.manufacturing_date} (距今 ${Math.round(diffInDaysManufacturing)} 天)
-                        <p></p>
-                    `);
-                });
+                checkShipmentRecords(productSn, inputField, productInfoContainer, foundProduct);
             });
+        }
+
+        function checkShipmentRecords(productSn, inputField, productInfoContainer, foundProduct) {
+            $.get("/json/shipment_in", function(shipmentInData) {
+                var hasShipmentInRecord = shipmentInData.some(function(shipment) {
+                    return shipment.product_sn === productSn;
+                });
+
+                if (hasShipmentInRecord) {
+                    $.get("/json/shipment_out", function(shipmentOutData) {
+                        var hasShipmentOutRecord = shipmentOutData.some(function(shipment) {
+                            return shipment.product_sn === productSn;
+                        });
+
+                        if (!hasShipmentOutRecord) {
+                            alert("產品序號 " + productSn + " 已有進貨紀錄，且尚未出貨，請重新掃描");
+                            inputField.val(''); // 清除輸入欄位
+                            productInfoContainer.empty();
+                            return;
+                        }
+                        displayProductInfo(inputField, productInfoContainer, foundProduct);
+                    });
+                } else {
+                    displayProductInfo(inputField, productInfoContainer, foundProduct);
+                }
+            });
+        }
+
+        function displayProductInfo(inputField, productInfoContainer, foundProduct) {
+            scannedSnSet.add(foundProduct.product_sn); // 將新掃描的序號添加到集合中
+
+            var currentDate = new Date(); // 現在的日期和時間
+            var createdDate = new Date(foundProduct.created_date);
+            var manufacturingDate = new Date(foundProduct.manufacturing_date);
+            var diffInTimeCreated = currentDate - createdDate;
+            var diffInTimeManufacturing = currentDate - manufacturingDate;
+            var diffInDaysCreated = diffInTimeCreated / (1000 * 3600 * 24);
+            var diffInDaysManufacturing = diffInTimeManufacturing / (1000 * 3600 * 24);
+
+            productInfoContainer.html(`
+                產品名稱: ${foundProduct.product_name}、型號: ${foundProduct.model_name}、ERP 編號: ${foundProduct.erp_no} <br>
+                產品建檔: ${foundProduct.created_date} (距今 ${Math.round(diffInDaysCreated)} 天)<br>
+                出廠日期: ${foundProduct.manufacturing_date} (距今 ${Math.round(diffInDaysManufacturing)} 天)
+                <p></p>
+            `);
         }
 
         function addProductSnInput() {
@@ -83,7 +99,7 @@
             newProductSnInput.find('.product-info').empty();
             newProductSnInput.append('<p><a href="#" class="remove-sn-link">刪除</a></p><hr>');
             newProductSnInput.appendTo("#product-sn-container");
-            newProductSnInput.find("input[type='text']").focus();            
+            newProductSnInput.find("input[type='text']").focus();
         }
 
         $("#add-product-sn").click(addProductSnInput);
@@ -93,7 +109,7 @@
             scannedCount--;
             updateScannedCount();
         });
-        
+
         $(document).on('keydown', '.product-sn-input input[type="text"]', function(e) {
             if (e.key === 'Enter' || e.keyCode === 13) {
                 e.preventDefault();
@@ -104,6 +120,7 @@
         });
     });
 </script>
+
 
 
 <div class="container mt-3">

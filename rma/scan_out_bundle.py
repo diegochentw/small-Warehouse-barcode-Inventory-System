@@ -100,17 +100,36 @@ def scan_out_single():
                 WHERE rp.product_id = (SELECT product.product_id FROM product WHERE product.product_sn = ? )
             '''
 
-            has_rma = db.execute(rma_check_query, (product_sn,)).fetchone()
+            inventory_check_query = '''
+                SELECT 
+                    SUM(CASE WHEN s.type = '進倉' THEN 1 ELSE 0 END) - 
+                    SUM(CASE WHEN s.type = '出倉' THEN 1 ELSE 0 END) AS net_inflow
+                FROM shipment_product sp
+                JOIN shipment s ON sp.shipment_id = s.shipment_id
+                WHERE sp.product_id = (
+                    SELECT product_id 
+                    FROM product 
+                    WHERE product_sn = ? 
+                )
+                GROUP BY sp.product_id
+            '''
+            net_inflow = db.execute(inventory_check_query, (product_sn,)).fetchone()
+            if net_inflow and net_inflow['net_inflow'] > 0:
+                # 如果庫存足夠，檢查是否存在出倉和 RMA 紀錄
+                has_rma = db.execute(rma_check_query, (product_sn,)).fetchone()
 
-            proceed_with_shipment = False
-
-            if existing_shipment and not has_rma:
-                flash(f'產品序號{product_sn}已有出倉紀錄，無法再度出倉')
-            elif existing_shipment and has_rma:
-                flash(f'產品序號{product_sn}已有出倉紀錄，但因為有RMA紀錄，所以允許再度出倉')
-                proceed_with_shipment = True
+                if existing_shipment and not has_rma:
+                    flash(f'出倉成功，需注意此產品序號{product_sn}曾有出倉紀錄且再次進貨')
+                    proceed_with_shipment = True
+                elif existing_shipment and has_rma:
+                    flash(f'產品序號{product_sn}已有出倉紀錄，但因為有RMA紀錄，所以允許再度出倉')
+                    proceed_with_shipment = True
+                else:
+                    # 沒有出倉紀錄或者有 RMA 紀錄
+                    proceed_with_shipment = True
             else:
-                proceed_with_shipment = True
+                flash(f'產品序號 {product_sn} 的庫存不足無法出倉，請檢查是否需要二次以上進貨紀錄')
+                proceed_with_shipment = False
 
             # If it's okay to proceed with shipment, insert records into the database
             if proceed_with_shipment:
@@ -178,7 +197,6 @@ def scan_out_batch():
             try:
                 db = get_db()
 
-
                 db.execute(
                     'INSERT INTO shipment (customer_id, type, note) VALUES (?, "出倉",?)',
                     (customer_id, note)
@@ -202,18 +220,30 @@ def scan_out_batch():
                         JOIN rma_product rp ON rma.rma_id = rp.rma_id
                         WHERE rp.product_id = (SELECT product.product_id FROM product WHERE product.product_sn = ? )
                     '''
-                    has_rma = db.execute(rma_check_query, (product_sn,)).fetchone()
+                    inventory_check_query = '''
+                        SELECT 
+                            SUM(CASE WHEN s.type = '進倉' THEN 1 ELSE 0 END) - 
+                            SUM(CASE WHEN s.type = '出倉' THEN 1 ELSE 0 END) AS net_inflow
+                        FROM shipment_product sp
+                        JOIN shipment s ON sp.shipment_id = s.shipment_id
+                        WHERE sp.product_id = (
+                            SELECT product_id 
+                            FROM product 
+                            WHERE product_sn = ? 
+                        )
+                        GROUP BY sp.product_id
+                    '''
+                    
+                    net_inflow = db.execute(inventory_check_query, (product_sn,)).fetchone()
 
-                    proceed_with_shipment = False
-
-                    if existing_shipment and not has_rma:
-                        flash(f'產品序號{product_sn}已有出倉紀錄，無法再度出倉')
-                        batch_successful = False
-                    elif existing_shipment and has_rma:
-                        flash(f'產品序號{product_sn}提醒!已有出倉紀錄，因存在RMA紀錄所以允許再度出倉')
-                        proceed_with_shipment = True
+                    if net_inflow and net_inflow['net_inflow'] > 0:
+                        # 如果庫存足夠則允許出倉
+                            proceed_with_shipment = True
                     else:
-                        proceed_with_shipment = True
+                        flash(f'產品序號 {product_sn} 的庫存不足無法出倉，請檢查是否需要再次進倉')
+                        proceed_with_shipment = False
+                        batch_successful = False
+                        continue
 
                     if proceed_with_shipment:
                         product_id = get_product_id(product_sn)

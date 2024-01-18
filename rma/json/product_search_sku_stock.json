@@ -51,9 +51,9 @@
     {
         "product_name": "REVOLUTION D.F. 2 (ERS850EWT)",
         "model_name": "ERS850EWT",
-        "scan_in": 38,
+        "scan_in": 39,
         "scan_out": 37,
-        "stock": 1
+        "stock": 2
     },
     {
         "product_name": "REVOLUTION D.F. X (ERT1050EWT)",
@@ -75,12 +75,5 @@
         "scan_in": 185,
         "scan_out": 52,
         "stock": 133
-    },
-    {
-        "product_name": "test",
-        "model_name": "test",
-        "scan_in": 50,
-        "scan_out": 0,
-        "stock": 50
     }
 ]

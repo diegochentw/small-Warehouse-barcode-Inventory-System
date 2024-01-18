@@ -314,7 +314,7 @@ def product_create_batch_scope():
             檢查前綴是否為字母或數字或包含斜線
             """
             for char in prefix:
-                if not (char.isalnum() or char == "\\"):
+                if not (char.isalnum() or char == '/' or char == '\\'):
                     return False
             return True
 
@@ -324,14 +324,8 @@ def product_create_batch_scope():
             error = '請填寫完整前綴和序號範圍'
         #elif not product_sn_prefix.isalnum():
         elif not is_valid_sn_prefix(product_sn_prefix):
-            error = '前綴必須為字母或數字或包含斜線'
+            error = '前綴僅允許字母/數字/斜線及反斜線'
             flash(error)
-
-            existing_product_sn_query = 'SELECT product_sn FROM product WHERE product_sn = ?'
-            existing_product_sn = db.execute(existing_product_sn_query, (product_sn,)).fetchone()
-
-            if existing_product_sn:
-                flash(f'產品序號{product_sn}已存在，無法再次新增')
 
         if error is not None:
             flash(error)    
