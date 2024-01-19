@@ -5,4 +5,10 @@ tests
 studio.code-workspace
 rma/__pycache__/
 .venv
-
+rma/json/*
+rma/json/customers.json
+rma/json/overview_customers.json
+rma/json/overview_products.json
+rma/json/overview_shipments.json
+rma/json/shipments_in.json
+rma/json/shipments_out.json
