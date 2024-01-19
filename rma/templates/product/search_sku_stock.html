@@ -23,27 +23,44 @@
     </table>
   </div>
 
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
   <script>
-    $(document).ready(function() {
-        $('#product').DataTable({
-          language: {
-              url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/zh-HANT.json',
-            },          
-            "ajax": {
-                "url": "/json/search_sku_stock",  // 外部 URL
-                "dataSrc": ""
-            },
-            "columns": [
-                { "data": "product_name" },
-                { "data": "model_name" },
-                { "data": "scan_in" },
-                { "data": "scan_out" },
-                { "data": "stock" },
+      $(document).ready(function() {
+          var table = $('#product').DataTable({
+              language: {
+                  url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/zh-HANT.json',
+              },          
+              ajax: {
+                  url: "/json/search_sku_stock",  // 外部 URL
+                  dataSrc: ""
+              },
+              columns: [
+                  { data: "product_name" },
+                  { data: "model_name" },
+                  { data: "scan_in" },
+                  { data: "scan_out" },
+                  {
+                      data: "stock",
+                      render: function (data, type, row) {
+                          return '<a href="#" class="stock-link" data-model="' + row.model_name + '">' + data + '</a>';
+                      }
+                  },
+              ]
+          });
 
-            ],
-        });
-    });
-</script>
+          $('#product tbody').on('click', 'a.stock-link', function(e) {
+              e.preventDefault();
+              var model = $(this).data('model');
+              $.ajax({
+                  url: '/products/product_not_shipped/' + model,
+                  success: function(data) {
+                      alert('未出庫產品序號: ' + data.join(', '));
+                  }
+              });
+          });
+      });
+  </script>
 
 {% endblock %}
 

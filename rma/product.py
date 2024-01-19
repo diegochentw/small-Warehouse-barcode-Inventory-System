@@ -445,7 +445,7 @@ def product_search_sku_stock():
             JOIN product p ON sp.product_id = p.product_id
             JOIN product_sku ps ON p.sku_id = ps.sku_id
             GROUP BY ps.model_name;
-            
+                                                      
    ''').fetchall()
     
     json_result = []
@@ -453,6 +453,7 @@ def product_search_sku_stock():
         json_result.append({
             'product_name': sku_stock['product_name'],
             'model_name': sku_stock['model_name'],
+            # 'serial_number': sku_stock['serial_number'], #產品序號
             'scan_in': sku_stock['scan_in'],
             'scan_out': sku_stock['scan_out'],
             'stock': sku_stock['stock'],
@@ -467,3 +468,31 @@ def product_search_sku_stock():
         print(f"Error: {e}")
 
     return render_template('product/search_sku_stock.html')
+
+# @audit-info 查詢尚未出庫庫存的產品序號
+
+@bp_product.route('/product_not_shipped/<model_name>', methods=['GET'])
+@login_required
+def product_not_shipped(model_name):
+    db = get_db()
+    product_sn = db.execute('''
+        SELECT p.product_sn
+        FROM product p
+        JOIN product_sku ps ON p.sku_id = ps.sku_id
+        WHERE ps.model_name = ?
+          AND p.product_id NOT IN (
+              SELECT sp.product_id 
+              FROM shipment_product sp
+              JOIN shipment s ON sp.shipment_id = s.shipment_id
+              WHERE s.type = '出倉'
+          )
+          AND p.product_id IN (
+              SELECT sp.product_id
+              FROM shipment_product sp
+              JOIN shipment s ON sp.shipment_id = s.shipment_id
+              WHERE s.type = '進倉'
+          )
+    ''', (model_name,)).fetchall()
+
+    serial_numbers = [sn['product_sn'] for sn in product_sn]
+    return jsonify(serial_numbers if serial_numbers else ["無未出庫產品"])

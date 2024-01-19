@@ -67,10 +67,6 @@ def get_rma():
 def get_product_search_sku_stock():
     return load_json_data('rma/json/product_search_sku_stock.json')
 
-
-
-
-
 @bp_json.route('/json/product/<product_sn>', methods=['GET'])
 def get_product_info(product_sn):
     db = get_db()
