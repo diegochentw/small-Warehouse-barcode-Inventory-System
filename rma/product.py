@@ -162,72 +162,55 @@ def product_create_sku():
 @bp_product.route('/product_sku_update/<int:sku_id>', methods=('GET', 'POST'))
 @login_required
 def product_update_sku(sku_id):
-
-    categories = None
-
     db = get_db()
-    product_sku = db.execute('''        
+    product_sku = db.execute(
+        '''
         SELECT ps.sku_id, ps.category_id, ps.product_name, ps.model_name, ps.ean_code, ps.upc_code, cg.category_name, ps.created_date
         FROM product_sku ps
         JOIN category cg ON ps.category_id = cg.category_id
-        WHERE ps.sku_id = ?                     
-        ''',(sku_id,)).fetchone()
-    
+        WHERE ps.sku_id = ?
+        ''',
+        (sku_id,)
+    ).fetchone()
+
     if product_sku is None:
-        flash("找不到該商品代碼，無法更新!")    
+        flash("找不到該商品代碼，無法更新!")
         return redirect(url_for('overview.product.products_skus'))
 
     if request.method == 'POST':
-        category_id = request.form['category_id'].strip()
+        new_category_id = request.form['category_id'].strip()
         product_name = request.form['product_name'].strip()
         model_name = request.form['model_name'].strip()
-        ean_code = request.form['ean_code'].strip().upper()  # Assuming ean_code is uppercase
+        ean_code = request.form['ean_code'].strip().upper()
         upc_code = request.form['upc_code'].strip()
 
-        error = None
+        validation_error = None
 
         if not model_name:
-            error = '產品型號為必填'
+            validation_error = '產品型號為必填'
 
-        existing_sku = db.execute(
+        duplicate_sku = db.execute(
             'SELECT sku_id FROM product_sku WHERE ean_code = ? AND sku_id != ?',
             (ean_code, sku_id)
         ).fetchone()
 
-        if existing_sku:
-            error = 'EAN碼必須唯一，該EAN碼已存在於其他商品代碼'            
+        if duplicate_sku:
+            validation_error = 'EAN碼必須唯一，該EAN碼已存在於其他商品代碼'
 
-        if not existing_sku:
+        if validation_error is None:
             try:
-                # Begin transaction
-                db.execute('BEGIN')
                 db.execute(
                     'UPDATE product_sku SET category_id = ?, product_name = ?, model_name = ?, ean_code = ?, upc_code = ? WHERE sku_id = ?',
-                    (category_id, product_name, model_name, ean_code, upc_code, sku_id)
+                    (new_category_id, product_name, model_name, ean_code, upc_code, sku_id)
                 )
-                db.commit()  # Commit transaction
+                db.commit()
                 return redirect(url_for('overview.product.product_create_sku'))
             except sqlite3.IntegrityError as e:
-                db.rollback()  # Rollback transaction on error
                 flash(str(e))
         else:
-            flash(error)   
+            flash(validation_error)
 
-        if error is not None:
-            flash(error)
-
-        else:
-            db = get_db()    
-            db.execute(
-                'UPDATE product_sku SET category_id = ?, product_name = ?, model_name = ?, ean_code = ?, upc_code = ?',
-                (category_id, product_name, model_name, ean_code, upc_code)
-            )
-            db.commit()
-            return redirect(url_for('overview.product.product_create_sku'))
-        
-    if categories is None:
-        db = get_db()
-        categories = db.execute('SELECT category_id, category_name FROM category').fetchall()
+    categories = db.execute('SELECT category_id, category_name FROM category').fetchall()
 
     return render_template('product/update_sku.html', product_sku=product_sku, categories=categories)
 
