@@ -8,3 +8,6 @@ rma/__pycache__/
 rma/json/
 rma/json/product_search_sku_stock.json
 rma/json/products.json
+rma/json/overview_shipments.json
+rma/json/shipments_in.json
+rma/json/shipments_out.json
