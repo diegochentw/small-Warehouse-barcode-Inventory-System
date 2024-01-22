@@ -34,12 +34,6 @@ def create_app(test_config=None):
     app.register_blueprint(overview.bp)
     app.add_url_rule('/', endpoint='index')
 
-
-    # a simple page that says hello
-    @app.route('/hello')
-    def hello():
-        return '嗨!'
-
     return app
 
 
