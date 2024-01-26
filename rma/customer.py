@@ -123,11 +123,6 @@ def customer_update(customer_id):
             )
             db.commit()
             return redirect(url_for('overview.customer.customers'))
-            # return redirect(url_for('overview.customer_details', customer_id=customer_id))
-
-
-  # return redirect(url_for('overview.customer.customers', customer_id=customer_id))
-  # return render_template('customer/update.html', customers_id = customer_id, customer = customer)   
     return render_template('customer/update.html', customer_id=customer_id, customer=customer)
 
 # @audit-ok 刪除

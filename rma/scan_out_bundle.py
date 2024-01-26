@@ -233,12 +233,25 @@ def scan_out_batch():
                         )
                         GROUP BY sp.product_id
                     '''
-                    
-                    net_inflow = db.execute(inventory_check_query, (product_sn,)).fetchone()
+                    # 改進庫存檢查機制，允許二次出貨
+                    def check_inventory(product_sn):
+                        inventory_query = '''
+                        SELECT 
+                            (SELECT COUNT(*) FROM shipment_product WHERE product_id = (SELECT product_id FROM product WHERE product_sn = ?) AND shipment_id IN (SELECT shipment_id FROM shipment WHERE type = '進倉')) -
+                            (SELECT COUNT(*) FROM shipment_product WHERE product_id = (SELECT product_id FROM product WHERE product_sn = ?) AND shipment_id IN (SELECT shipment_id FROM shipment WHERE type = '出倉')) AS current_inventory
+                        '''
+                        current_inventory = db.execute(inventory_query, (product_sn, product_sn)).fetchone()
+                        return current_inventory and current_inventory['current_inventory'] > 0
 
-                    if net_inflow and net_inflow['net_inflow'] > 0:
-                        # 如果庫存足夠則允許出倉
-                            proceed_with_shipment = True
+                    # # 舊庫存檢查機制
+                    # net_inflow = db.execute(inventory_check_query, (product_sn,)).fetchone()
+
+                    # if net_inflow and net_inflow['net_inflow'] > 0:
+                    #     # 如果庫存足夠則允許出倉
+                    #         proceed_with_shipment = True
+
+                    if check_inventory(product_sn):
+                        proceed_with_shipment = True
                     else:
                         flash(f'產品序號 {product_sn} 的庫存不足無法出倉，請檢查是否需要再次進倉')
                         proceed_with_shipment = False
@@ -320,24 +333,34 @@ def scan_out_range():
             flash('請至少輸入一個產品序號')
             return render_template('shipment/scan_out_range.html', customers=customers)
 
+        already_shipped_sn = []
+        
         # 檢查序號的庫存情況
         serials_with_positive_stock = []
         for sn in product_sn_list:
-            net_inflow = db.execute(
+            current_stock = db.execute(
                 '''SELECT 
-                    SUM(CASE WHEN s.type = '進倉' THEN 1 ELSE 0 END) - 
-                    SUM(CASE WHEN s.type = '出倉' THEN 1 ELSE 0 END) AS net_inflow
-                FROM shipment_product sp
-                JOIN shipment s ON sp.shipment_id = s.shipment_id
-                JOIN product p ON sp.product_id = p.product_id
-                WHERE p.product_sn = ?
-                GROUP BY sp.product_id''',
+                    (SELECT COUNT(*) FROM shipment_product WHERE product_id = (SELECT product_id FROM product WHERE product_sn = ?) AND shipment_id IN (SELECT shipment_id FROM shipment WHERE type = '進倉')) -
+                    (SELECT COUNT(*) FROM shipment_product WHERE product_id = (SELECT product_id FROM product WHERE product_sn = ?) AND shipment_id IN (SELECT shipment_id FROM shipment WHERE type = '出倉')) AS current_stock
+                ''',
+                (sn, sn)
+            ).fetchone()
+
+            last_record = db.execute(
+                '''SELECT type FROM shipment 
+                   JOIN shipment_product ON shipment.shipment_id = shipment_product.shipment_id
+                   JOIN product ON shipment_product.product_id = product.product_id
+                   WHERE product.product_sn = ?
+                   ORDER BY shipment.shipment_id DESC LIMIT 1''',
                 (sn,)
             ).fetchone()
 
+            if last_record and last_record[0] == '出倉':
+                already_shipped_sn.append(sn)
+
             # 判斷庫存是否大於0
-            if net_inflow and net_inflow[0] > 0:
-                serials_with_positive_stock.append(sn)
+            if current_stock and current_stock[0] > 0:
+                serials_with_positive_stock.append(sn)        
 
         # 過濾掉庫存不足的序號
         product_sn_list = [sn for sn in product_sn_list if sn in serials_with_positive_stock]
@@ -360,62 +383,7 @@ def scan_out_range():
 
     return render_template('shipment/scan_out_range.html', customers=customers)
 
-# @audit-issue 出貨資料更新
-# @bp_scan_out.route('/shipment_update/<int:shipment_id>', methods=('GET', 'POST'))
-# @login_required
-# def shipment_update(shipment_id):
-#     db = get_db()
-#     shipment = db.execute('''
-#         SELECT 
-#             s.shipment_id, s.type, s.created_date AS shipment_date, s.note, 
-#             c.customer_name, c.contact, c.type AS customer_type, c.phone, c.email, c.address, c.notes AS customer_notes,
-#             sp.product_id,
-#             cg.category_name,               
-#             ps.ean_code, ps.upc_code, ps.model_name, ps.product_name, ps.created_date AS product_sku_created_date,
-#             p.sku_id, p.erp_no, p.product_sn, p.manufacturing_date, p.creator
-#         FROM shipment s
-#         JOIN customer c ON s.customer_id = c.customer_id
-#         JOIN shipment_product sp ON s.shipment_id = sp.shipment_id
-#         JOIN category cg ON cg.category_id = ps.category_id
-#         JOIN product p ON sp.product_id = p.product_id
-#         JOIN product_sku ps ON p.sku_id = ps.sku_id
-#         WHERE s.shipment_id = ?
-#     ''', (shipment_id,)).fetchone()
-
-#     # 查詢所有客戶資料
-#     customers = db.execute('SELECT customer_id, customer_name FROM customer').fetchall()
-
-#     if shipment is None:
-#         return redirect(url_for('overview.scan_out.scan_out'))
-    
-#     if request.method == 'POST':
-#         # new_shipment_id = request.form['shipment_id']
-#         customer_id = request.form['customer_id']
-#         note = request.form['note']
-#         error = None
-
-#         if error:
-#             return render_template('shipment/update.html', error=error, shipment=shipment, shipment_id=shipment_id)
-
-#         if not customer_id:
-#             error = '無效輸入'
-#             return render_template('shipment/update.html', error=error, shipment_id=shipment_id)  # 添加錯誤訊息
-
-#         else:
-#             db.execute(
-#             '''
-#             UPDATE shipment SET customer_id = ?, note = ?
-#             WHERE shipment_id = ?
-
-#             ''',
-#             (customer_id, note, shipment_id)
-#             )
-#             db.commit()
-#             return redirect(url_for('overview.scan_out.scan_out'))
-        
-        
-#     return render_template('shipment/scan_out_update.html', shipment_id = shipment_id, shipment=shipment, customers=customers)
-
+# @audit-info 更新
 @bp_scan_out.route('/shipment_update/<int:shipment_id>', methods=('GET', 'POST'))
 @login_required
 def shipment_update(shipment_id):

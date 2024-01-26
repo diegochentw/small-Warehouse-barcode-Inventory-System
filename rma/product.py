@@ -458,24 +458,44 @@ def product_search_sku_stock():
 @login_required
 def product_not_shipped(model_name):
     db = get_db()
+
     product_sn = db.execute('''
         SELECT p.product_sn
         FROM product p
         JOIN product_sku ps ON p.sku_id = ps.sku_id
         WHERE ps.model_name = ?
-          AND p.product_id NOT IN (
-              SELECT sp.product_id 
+          AND (
+              SELECT COUNT(*) 
               FROM shipment_product sp
               JOIN shipment s ON sp.shipment_id = s.shipment_id
-              WHERE s.type = '出倉'
-          )
-          AND p.product_id IN (
-              SELECT sp.product_id
+              WHERE sp.product_id = p.product_id AND s.type = '進倉'
+          ) > (
+              SELECT COUNT(*)
               FROM shipment_product sp
               JOIN shipment s ON sp.shipment_id = s.shipment_id
-              WHERE s.type = '進倉'
+              WHERE sp.product_id = p.product_id AND s.type = '出倉'
           )
     ''', (model_name,)).fetchall()
+
+    # 舊的查詢，無法顯示二次進貨的產品序號
+    # product_sn = db.execute('''
+    #     SELECT p.product_sn
+    #     FROM product p
+    #     JOIN product_sku ps ON p.sku_id = ps.sku_id
+    #     WHERE ps.model_name = ?
+    #       AND p.product_id NOT IN (
+    #           SELECT sp.product_id 
+    #           FROM shipment_product sp
+    #           JOIN shipment s ON sp.shipment_id = s.shipment_id
+    #           WHERE s.type = '出倉'
+    #       )
+    #       AND p.product_id IN (
+    #           SELECT sp.product_id
+    #           FROM shipment_product sp
+    #           JOIN shipment s ON sp.shipment_id = s.shipment_id
+    #           WHERE s.type = '進倉'
+    #       )
+    # ''', (model_name,)).fetchall()
 
     serial_numbers = [sn['product_sn'] for sn in product_sn]
     return jsonify(serial_numbers if serial_numbers else ["無未出庫產品"])
