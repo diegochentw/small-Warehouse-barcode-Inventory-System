@@ -20,3 +20,5 @@ rma/json/product_search_sku_stock.json
 rma/json/products.json
 rma/json/shipments_in.json
 rma/json/shipments_out.json
+rma/json/product_search_sku_stock.json
+rma/json/shipments_in.json
