@@ -229,21 +229,44 @@ def scan_in_batch():
 
 def generate_serial_numbers(start_sn, end_sn):
     def split_alpha_num(s):
-        alpha_part = ''.join(filter(str.isalpha, s))
-        num_part = ''.join(filter(str.isdigit, s))
-        return alpha_part, num_part
+        import re
+        # 使用正则表达式匹配序列号中的数字部分和字母部分
+        matches = re.findall(r'[A-Za-z]+|\d+', s)
+        # 返回分割后的字母部分和数字部分
+        return matches[:-1], matches[-1]  # 假设最后一个匹配项是完整的数字部分
 
-    start_alpha, start_num = split_alpha_num(start_sn)
-    end_alpha, end_num = split_alpha_num(end_sn)
+    start_parts, start_num = split_alpha_num(start_sn)
+    end_parts, end_num = split_alpha_num(end_sn)
 
-    if start_alpha != end_alpha:
-        raise ValueError("英文字母部分不相同.")
+    # 验证除了最后的数字部分外，其他部分是否一致
+    if start_parts != end_parts:
+        raise ValueError("序列号的字母部分不匹配")
 
     num_length = len(start_num)
-    return [
-        start_sn.replace(start_num, str(i).zfill(num_length))
+    serial_numbers = [
+        ''.join(start_parts) + str(i).zfill(num_length)
         for i in range(int(start_num), int(end_num) + 1)
     ]
+    return serial_numbers
+
+
+# def generate_serial_numbers(start_sn, end_sn):
+#     def split_alpha_num(s):
+#         alpha_part = ''.join(filter(str.isalpha, s))
+#         num_part = ''.join(filter(str.isdigit, s))
+#         return alpha_part, num_part
+
+#     start_alpha, start_num = split_alpha_num(start_sn)
+#     end_alpha, end_num = split_alpha_num(end_sn)
+
+#     if start_alpha != end_alpha:
+#         raise ValueError("英文字母部分不相同.")
+
+#     num_length = len(start_num)
+#     return [
+#         start_sn.replace(start_num, str(i).zfill(num_length))
+#         for i in range(int(start_num), int(end_num) + 1)
+#     ]
 
 
 # def generate_serial_numbers(start_sn, end_sn):
