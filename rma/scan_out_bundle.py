@@ -294,19 +294,41 @@ def scan_out_batch():
     return render_template('shipment/scan_out_batch.html', customers=customers)
 
 def generate_serial_numbers(start_sn, end_sn):
-    start_alpha = ''.join(filter(str.isalpha, start_sn))
-    start_num = ''.join(filter(str.isdigit, start_sn))
-    
-    end_alpha = ''.join(filter(str.isalpha, end_sn))
-    end_num = ''.join(filter(str.isdigit, end_sn))
-    
-    if start_alpha != end_alpha:
-        raise ValueError("英文字母部分不相同.")
-    
-    return [
-        start_alpha + str(i).zfill(len(start_num))
+    def split_alpha_num(s):
+        import re
+        # 使用正则表达式匹配序列号中的数字部分和字母部分
+        matches = re.findall(r'[A-Za-z]+|\d+', s)
+        # 返回分割后的字母部分和数字部分
+        return matches[:-1], matches[-1]  # 假设最后一个匹配项是完整的数字部分
+
+    start_parts, start_num = split_alpha_num(start_sn)
+    end_parts, end_num = split_alpha_num(end_sn)
+
+    # 验证除了最后的数字部分外，其他部分是否一致
+    if start_parts != end_parts:
+        raise ValueError("序列号的字母部分不匹配")
+
+    num_length = len(start_num)
+    serial_numbers = [
+        ''.join(start_parts) + str(i).zfill(num_length)
         for i in range(int(start_num), int(end_num) + 1)
     ]
+    return serial_numbers
+
+# def generate_serial_numbers(start_sn, end_sn):
+#     start_alpha = ''.join(filter(str.isalpha, start_sn))
+#     start_num = ''.join(filter(str.isdigit, start_sn))
+    
+#     end_alpha = ''.join(filter(str.isalpha, end_sn))
+#     end_num = ''.join(filter(str.isdigit, end_sn))
+    
+#     if start_alpha != end_alpha:
+#         raise ValueError("英文字母部分不相同.")
+    
+#     return [
+#         start_alpha + str(i).zfill(len(start_num))
+#         for i in range(int(start_num), int(end_num) + 1)
+#     ]
 
 # @audit-info 序號範圍出倉
 
