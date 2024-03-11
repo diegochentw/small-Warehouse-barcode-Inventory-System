@@ -5,6 +5,7 @@
     <hr>
     {% if g.user %}
     <a class="btn btn-primary me-2 " href="{{ url_for('overview.customer.customer_create') }}">新增客戶資料</a>
+    <a class="btn btn-primary me-2 " href="{{ url_for('overview.customer.filter_shipments') }}">客戶出貨紀錄</a>
     <hr>
     {% endif %}
 

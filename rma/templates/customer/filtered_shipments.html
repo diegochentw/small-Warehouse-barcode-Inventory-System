@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h3 class="text-center mt-4">{% block title %}客戶出貨紀錄{% endblock %}</h3>
+
+{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            查詢條件
+        </div>
+        <div class="card-body">
+            <form id="filterForm" action="{{ url_for('overview.customer.filter_shipments') }}" method="post">
+                
+                <div class="row">
+                    <!-- Customer selection -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="customer_id" class="form-label">客供商/消費者:</label>
+                            <select name="customer_id" id="customer_id" class="form-select" required>
+                                <option value="" disabled {{ 'selected' if not customer_id else '' }}>選擇客戶</option>
+                                {% for customer in customers %}
+                                <option value="{{ customer.customer_id }}" {{ 'selected' if customer.customer_id == customer_id else '' }}>{{ customer.customer_name }}</option>
+                                    
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Date range -->
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label for="start_date" class="form-label">開始日期:</label>
+                            <input type="date" id="start_date" name="start_date" class="form-control" value="{{ start_date }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label for="end_date" class="form-label">結束日期:</label>
+                            <input type="date" id="end_date" name="end_date" class="form-control" value="{{ end_date }}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+        <!-- 查询按钮 -->
+        <button type="submit" class="btn btn-primary">查詢</button>
+        <!-- 导出Excel按钮，指定提交到exportForm表单 -->
+        <button type="button" class="btn btn-success" onclick="exportToExcel()">Excel匯出</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Shipments records -->
+    <div id="shipments_out" class="mt-3">
+        {% if shipments_out %}
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>出貨編號</th>
+                    <th>產品序號</th>
+                    <th>產品名稱</th>
+                    <th>出貨日期</th>
+                    <!-- 其他表頭 -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for shipment in shipments_out %}
+                <tr>
+                    <td>{{ shipment.shipment_id }}</td>
+                    <td>{{ shipment.product_sn }}</td>
+                    <td>{{ shipment.product_name }}</td>
+                    <td>{{ shipment.shipment_date }}</td>
+                    <!-- 其他單元格數據 -->
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="text-center">沒有找到相關出貨紀錄。</p>
+        {% endif %}
+    </div>
+    
+
+    <div class="text-center mt-4">
+        <button onclick="window.print()" class="btn btn-info">列印此頁</button>
+    </div>
+</div>
+
+<script>
+   
+    // function exportToExcel() {
+    //     // 克隆现有的表单数据用于导出
+    //     var exportForm = document.getElementById('filterForm').cloneNode(true);
+    //     exportForm.action = "{{ url_for('overview.customer.export_shipments_to_excel') }}";
+    //     exportForm.method = "POST";
+    //     document.body.appendChild(exportForm); // 必须将表单添加到DOM中才能提交
+    //     exportForm.submit();
+    //     document.body.removeChild(exportForm); // 提交后从DOM中移除表单
+    // } 
+
+    function exportToExcel() {
+        var originalForm = document.getElementById('filterForm');
+        var exportForm = originalForm.cloneNode(true); // 克隆表单
+    
+        // 找到原始表单和克隆表单中的customer_id元素
+        var originalCustomerId = originalForm.querySelector('#customer_id');
+        var clonedCustomerId = exportForm.querySelector('#customer_id');
+    
+        // 将克隆表单中的customer_id的值设置为与原始表单中选中的值相同
+        clonedCustomerId.value = originalCustomerId.value;
+    
+        exportForm.action = "{{ url_for('overview.customer.export_shipments_to_excel') }}";
+        exportForm.method = "POST";
+        document.body.appendChild(exportForm); // 添加到DOM中以便提交
+        exportForm.submit(); // 提交表单
+        document.body.removeChild(exportForm); // 从DOM中移除表单
+    }
+    
+    </script>
+
+{% endblock %}
