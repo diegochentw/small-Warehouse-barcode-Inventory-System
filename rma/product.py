@@ -232,7 +232,7 @@ def product_create_single():
 
     if request.method == 'POST':
         sku_id = request.form['sku_id']  # 從前端獲取已存在的SKU ID
-        product_sn = request.form['product_sn']
+        product_sn = request.form['product_sn'].strip() #240418 清除前後空白
         erp_no = request.form['erp_no']
         manufacturing_date = request.form['manufacturing_date']
 
