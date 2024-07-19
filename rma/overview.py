@@ -9,7 +9,7 @@ import logging
 
 from rma.customer import bp_customer
 from rma.jsonRoute import bp_json
-from rma.rma import bp_rma
+from rma.rma import bp_rmaf
 from rma.product import bp_product
 from rma.scan_in_bundle import bp_scan_in
 from rma.scan_out_bundle import bp_scan_out

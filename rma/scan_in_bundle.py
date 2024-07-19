@@ -6,6 +6,7 @@ import json
 import logging
 import traceback
 import time
+import re
 
 bp_scan_in = Blueprint('scan_in', __name__, url_prefix='/shipment/scan_in')
 
@@ -227,20 +228,24 @@ def scan_in_batch():
 
     return render_template('shipment/scan_in_batch.html', customers = customers)
 
-def generate_serial_numbers(start_sn, end_sn):
-    def split_alpha_num(s):
-        import re
-        # 使用正则表达式匹配序列号中的数字部分和字母部分
-        matches = re.findall(r'[A-Za-z]+|\d+', s)
-        # 返回分割后的字母部分和数字部分
-        return matches[:-1], matches[-1]  # 假设最后一个匹配项是完整的数字部分
+def split_alpha_num(s):
+    # 使用正規表達式比對序號列中的字母及數字
+    matches = re.findall(r'[A-Za-z]+|\d+', s)
 
+    # 增加判斷式做錯誤檢查
+    if not matches or len(matches) < 2:
+        raise ValueError(f"序號列 '{s}' 格式不正確")
+    
+    # 返回分割後的字母及數字
+    return matches[:-1], matches[-1]  # 假設最後一個比對項目是數字
+
+def generate_serial_numbers(start_sn, end_sn):
     start_parts, start_num = split_alpha_num(start_sn)
     end_parts, end_num = split_alpha_num(end_sn)
 
-    # 验证除了最后的数字部分外，其他部分是否一致
+    # 驗證除了後段為數字外，其他部分是否一致
     if start_parts != end_parts:
-        raise ValueError("序列号的字母部分不匹配")
+        raise ValueError("批次序號的英文字母無法比對")
 
     num_length = len(start_num)
     serial_numbers = [
@@ -248,6 +253,14 @@ def generate_serial_numbers(start_sn, end_sn):
         for i in range(int(start_num), int(end_num) + 1)
     ]
     return serial_numbers
+
+try:
+    start_product_sn = "ABC001"
+    end_product_sn = "ABC010"
+    product_sn_list = generate_serial_numbers(start_product_sn, end_product_sn)
+    print(product_sn_list)
+except ValueError as e:
+    print(e)
 
 
 # def generate_serial_numbers(start_sn, end_sn):
