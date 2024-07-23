@@ -232,8 +232,8 @@ def split_alpha_num(s):
     # 使用正規表達式比對序號列中的字母及數字
     matches = re.findall(r'[A-Za-z]+|\d+', s)
 
-    # 增加判斷式做錯誤檢查
-    if not matches or len(matches) < 2:
+    # 增加判斷式做錯誤檢查，7/22 增加如果為純數字序號不會跳出報錯警告
+    if not matches or (len(matches) < 2 and not s.isdigit()):
         raise ValueError(f"序號列 '{s}' 格式不正確")
     
     # 返回分割後的字母及數字
