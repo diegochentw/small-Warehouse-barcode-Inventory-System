@@ -262,41 +262,6 @@ try:
 except ValueError as e:
     print(e)
 
-
-# def generate_serial_numbers(start_sn, end_sn):
-#     def split_alpha_num(s):
-#         alpha_part = ''.join(filter(str.isalpha, s))
-#         num_part = ''.join(filter(str.isdigit, s))
-#         return alpha_part, num_part
-
-#     start_alpha, start_num = split_alpha_num(start_sn)
-#     end_alpha, end_num = split_alpha_num(end_sn)
-
-#     if start_alpha != end_alpha:
-#         raise ValueError("英文字母部分不相同.")
-
-#     num_length = len(start_num)
-#     return [
-#         start_sn.replace(start_num, str(i).zfill(num_length))
-#         for i in range(int(start_num), int(end_num) + 1)
-#     ]
-
-
-# def generate_serial_numbers(start_sn, end_sn):
-#     start_alpha = ''.join(filter(str.isalpha, start_sn))
-#     start_num = ''.join(filter(str.isdigit, start_sn))
-    
-#     end_alpha = ''.join(filter(str.isalpha, end_sn))
-#     end_num = ''.join(filter(str.isdigit, end_sn))
-    
-#     if start_alpha != end_alpha:
-#         raise ValueError("英文字母部分不相同.")
-    
-#     return [
-#         start_alpha + str(i).zfill(len(start_num))
-#         for i in range(int(start_num), int(end_num) + 1)
-#     ]
-
 # @audit-info 輸入序號範圍進貨
 
 @bp_scan_in.route('/scan_in_range', methods=('GET', 'POST'))
