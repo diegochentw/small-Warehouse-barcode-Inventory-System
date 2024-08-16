@@ -1,24 +1,213 @@
 [
     {
+        "product_name": "ENERMAXK8 (ECA-EK8-BB-ARGB)",
+        "model_name": "ECA-EK8-BB-ARGB",
+        "scan_in": 30,
+        "scan_out": 7,
+        "stock": 23
+    },
+    {
+        "product_name": "ENERMAXK8 (ECA-EK8-WW-ARGB)",
+        "model_name": "ECA-EK8-WW-ARGB",
+        "scan_in": 30,
+        "scan_out": 7,
+        "stock": 23
+    },
+    {
+        "product_name": "ENERPAZO EP237 (ECA-EP237-BB-ARGB)",
+        "model_name": "ECA-EP237-BB-ARGB",
+        "scan_in": 102,
+        "scan_out": 61,
+        "stock": 41
+    },
+    {
+        "product_name": "ENERPAZO EP237 \u767d\u8272 (ECA-EP237-WW-ARGB)",
+        "model_name": "ECA-EP237-WW-ARGB",
+        "scan_in": 200,
+        "scan_out": 56,
+        "stock": 144
+    },
+    {
+        "product_name": "ENERPAZO EP237 \u767d\u8272 (ECA-EP237-WW-ARGB-01)",
+        "model_name": "ECA-EP237-WW-ARGB-01          ",
+        "scan_in": 70,
+        "scan_out": 70,
+        "stock": 0
+    },
+    {
+        "product_name": "MarbleShell MS20 (ECA-MS20-BB-ARGB-01)",
+        "model_name": "ECA-MS20-BB-ARGB-01",
+        "scan_in": 139,
+        "scan_out": 61,
+        "stock": 78
+    },
+    {
+        "product_name": "MarbleShell MS20 \u767d\u8272 (ECA-MS20-WW-ARGB-01)",
+        "model_name": "ECA-MS20-WW-ARGB-01",
+        "scan_in": 90,
+        "scan_out": 14,
+        "stock": 76
+    },
+    {
+        "product_name": "MarbleShell MS30 (ECA-MS30-BB-ARGB-01)",
+        "model_name": "ECA-MS30-BB-ARGB-01",
+        "scan_in": 91,
+        "scan_out": 1,
+        "stock": 90
+    },
+    {
+        "product_name": "MarbleShell  MS30 \u767d\u8272 (ECA-MS30-WW-ARGB-01)",
+        "model_name": "ECA-MS30-WW-ARGB-01",
+        "scan_in": 100,
+        "scan_out": 4,
+        "stock": 96
+    },
+    {
+        "product_name": "Cyberbron II (ECS500B)",
+        "model_name": "ECS500B",
+        "scan_in": 492,
+        "scan_out": 138,
+        "stock": 354
+    },
+    {
+        "product_name": "Cyberbron II (ECS600B)",
+        "model_name": "ECS600B",
+        "scan_in": 102,
+        "scan_out": 99,
+        "stock": 3
+    },
+    {
+        "product_name": "Cyberbron II (ECS700B)",
+        "model_name": "ECS700B",
+        "scan_in": 102,
+        "scan_out": 102,
+        "stock": 0
+    },
+    {
+        "product_name": "PlatiGemini (EGN1200P)",
+        "model_name": "EGN1200P",
+        "scan_in": 49,
+        "scan_out": 27,
+        "stock": 22
+    },
+    {
+        "product_name": "AQUAFUSION 240 (ELC-AQF240-SQA)",
+        "model_name": "ELC-AQF240-SQA",
+        "scan_in": 318,
+        "scan_out": 102,
+        "stock": 216
+    },
+    {
+        "product_name": "AQUAFUSION ADV240 (ELC-AQFA240-SQA)",
+        "model_name": "ELC-AQFA240-SQA",
+        "scan_in": 52,
+        "scan_out": 13,
+        "stock": 39
+    },
+    {
+        "product_name": "AQUAFUSION ADV240 \u767d\u8272 (ELC-AQFA240-SQA-W)",
+        "model_name": "ELC-AQFA240-SQA-W",
+        "scan_in": 16,
+        "scan_out": 16,
+        "stock": 0
+    },
+    {
+        "product_name": "AQUAFUSION ADV360  (ELC-AQFA360-SQA)",
+        "model_name": "ELC-AQFA360-SQA",
+        "scan_in": 68,
+        "scan_out": 48,
+        "stock": 20
+    },
+    {
+        "product_name": "AQUAFUSION ADV360 \u767d\u8272\u6b3e (ELC-AQFA360-SQA-W)",
+        "model_name": "ELC-AQFA360-SQA-W",
+        "scan_in": 118,
+        "scan_out": 46,
+        "stock": 72
+    },
+    {
         "product_name": "LIQMAXFLO (ELC-LMF240T-ARGB)",
         "model_name": "ELC-LMF240T-ARGB",
-        "scan_in": 16,
-        "scan_out": 3,
-        "stock": 13
+        "scan_in": 40,
+        "scan_out": 8,
+        "stock": 32
     },
     {
         "product_name": "LIQMAXFLO (ELC-LMF360T-ARGB)",
         "model_name": "ELC-LMF360T-ARGB",
-        "scan_in": 12,
-        "scan_out": 0,
-        "stock": 12
+        "scan_in": 92,
+        "scan_out": 43,
+        "stock": 49
     },
     {
         "product_name": "LIQMAXFLO (ELC-LMF420T-ARGB)",
         "model_name": "ELC-LMF420T-ARGB",
-        "scan_in": 2,
+        "scan_in": 42,
+        "scan_out": 23,
+        "stock": 19
+    },
+    {
+        "product_name": "LIQMAX III 240 ARGB (ELC-LMT240-ARGB)",
+        "model_name": "ELC-LMT240-ARGB",
+        "scan_in": 8,
+        "scan_out": 8,
+        "stock": 0
+    },
+    {
+        "product_name": "LIQMAX III 240 ARGB \u767d\u8272 (ELC-LMT240-W-ARGB)",
+        "model_name": "ELC-LMT240-W-ARGB",
+        "scan_in": 5,
         "scan_out": 0,
-        "stock": 2
+        "stock": 5
+    },
+    {
+        "product_name": "LIQMAX III 360 ARGB (ELC-LMT360-ARGB)",
+        "model_name": "ELC-LMT360-ARGB",
+        "scan_in": 331,
+        "scan_out": 74,
+        "stock": 257
+    },
+    {
+        "product_name": "LIQMAX III 360 ARGB \u767d\u8272 (ELC-LMT360-W-ARGB)",
+        "model_name": "ELC-LMT360-W-ARGB",
+        "scan_in": 119,
+        "scan_out": 6,
+        "stock": 113
+    },
+    {
+        "product_name": "LIQTECH TR4 II (ELC-LTTRTO360-TBP)",
+        "model_name": "ELC-LTTRTO360-TBP",
+        "scan_in": 198,
+        "scan_out": 155,
+        "stock": 43
+    },
+    {
+        "product_name": "MARBLEBRON (EMB850EWT)",
+        "model_name": "EMB850EWT",
+        "scan_in": 25,
+        "scan_out": 0,
+        "stock": 25
+    },
+    {
+        "product_name": "MARBLEBRON RGB (EMB850EWT-RGB)",
+        "model_name": "EMB850EWT-RGB",
+        "scan_in": 25,
+        "scan_out": 0,
+        "stock": 25
+    },
+    {
+        "product_name": "MARBLEBRON \u767d\u8272 (EMB850EWT-W)",
+        "model_name": "EMB850EWT-W",
+        "scan_in": 125,
+        "scan_out": 0,
+        "stock": 125
+    },
+    {
+        "product_name": "MARBLEBRON RGB \u767d\u8272 (EMB850EWT-W-RGB)",
+        "model_name": "EMB850EWT-W-RGB",
+        "scan_in": 25,
+        "scan_out": 0,
+        "stock": 25
     },
     {
         "product_name": "REVOLUTION ATX3.0 (ERA1000EWT)",
@@ -30,16 +219,16 @@
     {
         "product_name": "REVOLUTION ATX3.0 (ERA1200EWT)",
         "model_name": "ERA1200EWT",
-        "scan_in": 30,
-        "scan_out": 0,
-        "stock": 30
+        "scan_in": 48,
+        "scan_out": 1,
+        "stock": 47
     },
     {
         "product_name": "REVOLUTION D.F. (ERF650AWT)",
         "model_name": "ERF650AWT",
-        "scan_in": 14,
-        "scan_out": 0,
-        "stock": 14
+        "scan_in": 15,
+        "scan_out": 7,
+        "stock": 8
     },
     {
         "product_name": "REVOLUTION D.F. (ERF750EWT)",
@@ -52,49 +241,77 @@
         "product_name": "REVOLUTION D.F. (ERF850EWT)",
         "model_name": "ERF850EWT",
         "scan_in": 7,
-        "scan_out": 0,
-        "stock": 7
+        "scan_out": 2,
+        "stock": 5
     },
     {
         "product_name": "REVOLUTION D.F. 2 (ERS850EWT)",
         "model_name": "ERS850EWT",
-        "scan_in": 59,
-        "scan_out": 59,
-        "stock": 0
+        "scan_in": 152,
+        "scan_out": 85,
+        "stock": 67
     },
     {
         "product_name": "REVOLUTION D.F. X (ERT1050EWT)",
         "model_name": "ERT1050EWT",
         "scan_in": 143,
-        "scan_out": 36,
-        "stock": 107
+        "scan_out": 40,
+        "stock": 103
     },
     {
         "product_name": "REVOLUTION D.F. X (ERT1200EWT)",
         "model_name": "ERT1200EWT",
         "scan_in": 86,
-        "scan_out": 39,
-        "stock": 47
+        "scan_out": 42,
+        "stock": 44
     },
     {
         "product_name": "REVOLUTION D.F. X (ERT850EWT)",
         "model_name": "ERT850EWT",
-        "scan_in": 185,
-        "scan_out": 52,
-        "stock": 133
+        "scan_in": 186,
+        "scan_out": 83,
+        "stock": 103
     },
     {
         "product_name": "ETS-F40-BK-ARGB CPU\u7a7a\u51b7\u6563\u71b1\u5668(\u9ed1)",
         "model_name": "ETS-F40-BK-ARGB",
-        "scan_in": 12,
-        "scan_out": 0,
-        "stock": 12
+        "scan_in": 24,
+        "scan_out": 9,
+        "stock": 15
+    },
+    {
+        "product_name": "ETS-F40-W-ARGB  CPU\u7a7a\u51b7\u6563\u71b1\u5668(\u767d)",
+        "model_name": "ETS-F40-W-ARGB",
+        "scan_in": 189,
+        "scan_out": 18,
+        "stock": 171
     },
     {
         "product_name": "ETS\u2013F40\u2013FS  CPU\u7a7a\u51b7\u6563\u71b1\u5668",
         "model_name": "ETS\u2013F40\u2013FS",
-        "scan_in": 26,
-        "scan_out": 24,
-        "stock": 2
+        "scan_in": 40,
+        "scan_out": 40,
+        "stock": 0
+    },
+    {
+        "product_name": "REVOLUTION D.F.12 (ETV750G)",
+        "model_name": "ETV750G",
+        "scan_in": 100,
+        "scan_out": 32,
+        "stock": 68
+    },
+    {
+        "product_name": "REVOLUTION D.F.12 (ETV850G)",
+        "model_name": "ETV850G",
+        "scan_in": 100,
+        "scan_out": 36,
+        "stock": 64
+    },
+    {
+        "product_name": "REVOLUTION D.F.12 (ETV850G-W)",
+        "model_name": "ETV850G-W",
+        "scan_in": 111,
+        "scan_out": 76,
+        "stock": 35
     }
 ]

@@ -142,7 +142,7 @@ def customer_delete(customer_id):
         db.commit()
         return redirect(url_for('overview.customer.customers'))
     
-# @audit 客戶出貨紀錄
+# @audit 客戶出貨紀錄查詢
 def get_filtered_shipments(customer_id, start_date, end_date):
     db = get_db()
     sql_query = '''
@@ -166,6 +166,8 @@ def get_filtered_shipments(customer_id, start_date, end_date):
     '''
     return db.execute(sql_query, (customer_id, start_date, end_date)).fetchall()
 
+
+#客戶出貨紀錄
 @bp_customer.route('/filter_shipments', methods=['GET', 'POST'])
 @login_required
 def filter_shipments():
@@ -180,6 +182,7 @@ def filter_shipments():
         
     return render_template('customer/filtered_shipments.html', customers=customers, shipments_out=shipments_out)
 
+                                              
 @bp_customer.route('/export_shipments_to_excel', methods=['GET', 'POST'])
 @login_required
 def export_shipments_to_excel():
@@ -229,11 +232,6 @@ def export_shipments_to_excel():
     # 接下來的代碼與原本處理DataFrame和導出Excel文件的邏輯保持不變
 
     # 將查詢結果轉換為DataFrame，使用columns參數確保列名被設置
-    # columns = ['Shipment ID', 'Type', 'Shipment Date', 'Note', 'Customer Name', 'Contact', 
-    #               'Customer Type', 'Phone', 'Email', 'Address', 'Customer Notes', 'Product ID', 
-    #               'Category Name', 'EAN Code', 'UPC Code', 'Model Name', 'Product Name', 
-    #               'Product SKU Created Date', 'SKU ID', 'ERP No', 'Product SN', 
-    #               'Manufacturing Date', 'Creator']
     columns = ['Shipment Date', 'Customer Name', 'Category Name', 'Model Name', 'Product Name', 'Product SN' 
                
                   ]
@@ -260,3 +258,79 @@ def export_shipments_to_excel():
     
     # 返回文件供用戶下載
     return send_file(excel_path, as_attachment=True, download_name='shipments_out.xlsx')
+
+
+#產品出貨紀錄 24/08/15
+@bp_customer.route('/filter_products', methods=['GET', 'POST'])
+@login_required
+def filter_products():
+    products = get_db().execute('SELECT model_name, product_name FROM product_sku').fetchall()
+    shipments_out = []
+
+    if request.method == 'POST':
+        model_name = request.form.get('model_name')  # 使用 get 方法避免 KeyError
+        if model_name:
+            shipments_out = get_filtered_products(model_name)  # 調用正確的資料庫查詢函數
+        else:
+            # 處理缺少字段的情況
+            flash('請選擇所有必填項目', 'warning')
+
+    return render_template('customer/filtered_products.html', products=products, shipments_out=shipments_out)
+
+
+@bp_customer.route('/export_products_to_excel', methods=['GET', 'POST'])
+@login_required
+def export_products_to_excel():
+    model_name = request.form.get('model_name')
+
+    # 建立數據庫連接
+    db = get_db()
+
+    # 直接執行SQL查詢
+    sql_query = '''
+    SELECT 
+        s.shipment_id, s.type, s.created_date AS shipment_date, s.note, 
+        c.customer_name, c.contact, c.type AS customer_type, c.phone, c.email, c.address, c.notes AS customer_notes,
+        sp.product_id,
+        cg.category_name,               
+        ps.ean_code, ps.upc_code, ps.model_name, ps.product_name, ps.created_date AS product_sku_created_date,
+        p.sku_id, p.erp_no, p.product_sn, p.manufacturing_date, p.creator
+    FROM shipment s
+    JOIN customer c ON s.customer_id = c.customer_id
+    JOIN shipment_product sp ON s.shipment_id = sp.shipment_id
+    JOIN category cg ON cg.category_id = ps.category_id
+    JOIN product p ON sp.product_id = p.product_id
+    JOIN product_sku ps ON p.sku_id = ps.sku_id
+    WHERE s.type = '出倉'
+    AND ps.model_name = ?
+
+    ORDER BY s.created_date DESC
+    '''
+    # 執行查詢，並將結果存儲在`shipments_out`中
+    shipments_out = db.execute(sql_query, (model_name)).fetchall()
+
+    return render_template('customer/filtered_products.html', shipments_out=shipments_out)
+
+# @audit 產品出貨紀錄查詢
+def get_filtered_products(model_name):
+    db = get_db()
+    sql_query = '''
+    SELECT 
+        s.shipment_id, s.type, s.created_date AS shipment_date, s.note, 
+        c.customer_name, c.contact, c.type AS customer_type, c.phone, c.email, c.address, c.notes AS customer_notes,
+        sp.product_id,
+        cg.category_name,               
+        ps.ean_code, ps.upc_code, ps.model_name, ps.product_name, ps.created_date AS product_sku_created_date,
+        p.sku_id, p.erp_no, p.product_sn, p.manufacturing_date, p.creator
+    FROM shipment s
+    JOIN customer c ON s.customer_id = c.customer_id
+    JOIN shipment_product sp ON s.shipment_id = sp.shipment_id
+    JOIN category cg ON cg.category_id = ps.category_id
+    JOIN product p ON sp.product_id = p.product_id
+    JOIN product_sku ps ON p.sku_id = ps.sku_id
+        WHERE s.type = '出倉'
+        AND ps.model_name = ?
+        ORDER BY s.created_date DESC
+    '''
+    shipments_out = db.execute(sql_query, (model_name,)).fetchall()
+    return shipments_out
