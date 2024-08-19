@@ -339,10 +339,10 @@ def scan_out_range():
     
     if request.method == 'POST':
         start_time = time.time()  # Start timestamp
-        
         customer_id = request.form['customer_id']
         start_product_sn = request.form['start_product_sn']
         end_product_sn = request.form['end_product_sn']
+        note = request.form['note']
 
         try:
             product_sn_list = generate_serial_numbers(start_product_sn, end_product_sn)
@@ -392,7 +392,7 @@ def scan_out_range():
             return render_template('shipment/scan_out_range.html', customers=customers)
 
         # 出倉操作
-        db.execute('INSERT INTO shipment (customer_id, type) VALUES (?, "出倉")', (customer_id,))
+        db.execute('INSERT INTO shipment (customer_id, note, type) VALUES (?, ?, "出倉")', (customer_id, note))
         shipment_id = db.execute('SELECT last_insert_rowid()').fetchone()[0]
 
         product_ids = {sn: get_product_id(sn) for sn in product_sn_list}
